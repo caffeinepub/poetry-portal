@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Web portal for public poetry collection",
+  "architectural_notes": [],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-create-a-home-page-displaying-a-grid-or-list-of-all-poems-with-their-titles-and-authors-allowing-users-to-click-through-to-read-the-full-poem",
+      "title": "Create a home page displaying a grid or list of all poems with their titles and authors, allowing users to click through to read the full poem",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-poem-detail-page-that-displays-the-full-poem-content-including-title-author-content-text-and-date-created",
+      "title": "Create a poem detail page that displays the full poem content including title, author, content text, and date created",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-an-admin-interface-or-form-to-add-new-poems-to-the-collection-with-fields-for-title-content-and-author",
+      "title": "Create an admin interface or form to add new poems to the collection with fields for title, content, and author",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-creative-literary-inspired-visual-theme-with-elegant-typography-warm-earth-tones-or-soft-pastels-and-a-clean-layout-that-emphasizes-readability-and-creates-a-contemplative-atmosphere-suitable-for-poetry",
+      "title": "Apply a creative, literary-inspired visual theme with elegant typography, warm earth tones or soft pastels, and a clean layout that emphasizes readability and creates a contemplative atmosphere suitable for poetry",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Create web portal for poetry collection",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Create a backend data model to store poems with fields: title (text), content (text), author (text), dateCreated (timestamp), and a unique identifier",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Implement backend methods to add new poems, retrieve all poems, and retrieve a single poem by ID",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Poetry Portal",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

@@ -1,0 +1,85 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-create-a-home-page-displaying-a-grid-or-list-of-all-poems-with-their-titles-and-authors-allowing-users-to-click-through-to-read-the-full-poem",
+      "featureTitle": "Create a home page displaying a grid or list of all poems with their titles and authors, allowing users to click through to read the full poem",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/PoemCard.tsx",
+        "frontend/src/pages/Home.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-a-poem-detail-page-that-displays-the-full-poem-content-including-title-author-content-text-and-date-created",
+      "featureTitle": "Create a poem detail page that displays the full poem content including title, author, content text, and date created",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/pages/PoemDetail.tsx",
+        "frontend/src/utils/formatDate.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-create-an-admin-interface-or-form-to-add-new-poems-to-the-collection-with-fields-for-title-content-and-author",
+      "featureTitle": "Create an admin interface or form to add new poems to the collection with fields for title, content, and author",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/pages/AdminForm.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-apply-a-creative-literary-inspired-visual-theme-with-elegant-typography-warm-earth-tones-or-soft-pastels-and-a-clean-layout-that-emphasizes-readability-and-creates-a-contemplative-atmosphere-suitable-for-poetry",
+      "featureTitle": "Apply a creative, literary-inspired visual theme with elegant typography, warm earth tones or soft pastels, and a clean layout that emphasizes readability and creates a contemplative atmosphere suitable for poetry",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

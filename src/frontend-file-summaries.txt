@@ -1,0 +1,12 @@
+{
+  "frontend/src/App.tsx": "Main application component that sets up TanStack Router with three routes (home, poem detail, admin) wrapped in a Layout component with QueryClient provider.",
+  "frontend/src/components/Layout.tsx": "Layout wrapper component providing consistent header with navigation, main content area with Outlet for routed pages, and footer with branding and attribution.",
+  "frontend/src/pages/Home.tsx": "Home page displaying all poems in a responsive grid layout with loading states, empty state, and error handling.",
+  "frontend/src/pages/PoemDetail.tsx": "Poem detail page showing full poem content with title, author, date, and formatted text with navigation back to collection.",
+  "frontend/src/pages/AdminForm.tsx": "Admin form page with validated inputs for title, author, and content to submit new poems with success feedback and navigation.",
+  "frontend/src/components/PoemCard.tsx": "Reusable poem card component displaying poem preview with title, author, date, and truncated content with hover effects and click navigation.",
+  "frontend/src/hooks/useQueries.ts": "Custom React Query hooks for fetching all poems, fetching poem by ID, and submitting new poems with automatic cache invalidation.",
+  "frontend/src/utils/formatDate.ts": "Utility function to convert backend Time (bigint nanoseconds) to human-readable date string format.",
+  "frontend/src/index.css": "Global styles with warm earth tone color palette in OKLCH format, custom Google Fonts (Crimson Text, Lora, Inter), and typography settings for literary aesthetic.",
+  "frontend/tailwind.config.js": "Tailwind configuration extending theme with custom font families, warm color palette, enhanced shadows, and typography settings for elegant literary design."
+}

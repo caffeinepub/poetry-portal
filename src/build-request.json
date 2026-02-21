@@ -1,0 +1,110 @@
+{
+  "kind": "build_request",
+  "title": "Create public poetry collection portal",
+  "projectName": "Poetry Portal",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Create a backend data model to store poems with fields: title (text), content (text), author (text), dateCreated (timestamp), and a unique identifier",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Poem data structure includes all specified fields",
+        "Each poem has a unique identifier for retrieval",
+        "Poems can be stored and retrieved from the backend"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Implement backend methods to add new poems, retrieve all poems, and retrieve a single poem by ID",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend provides a method to add a new poem",
+        "Backend provides a method to list all poems",
+        "Backend provides a method to get a specific poem by ID"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Create a home page displaying a grid or list of all poems with their titles and authors, allowing users to click through to read the full poem",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Home page shows all poems in an organized layout",
+        "Each poem preview displays at least the title and author",
+        "Clicking on a poem navigates to its detail view"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Create a poem detail page that displays the full poem content including title, author, content text, and date created",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Detail page shows complete poem information",
+        "Content is readable and properly formatted",
+        "Page includes navigation back to the home page"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Create an admin interface or form to add new poems to the collection with fields for title, content, and author",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Form includes input fields for title, content, and author",
+        "Form validates that required fields are filled",
+        "Successfully submitted poems appear in the collection"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Apply a creative, literary-inspired visual theme with elegant typography, warm earth tones or soft pastels, and a clean layout that emphasizes readability and creates a contemplative atmosphere suitable for poetry",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-2"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Design uses a cohesive color palette appropriate for literary content",
+        "Typography choices enhance readability and aesthetic appeal",
+        "Layout creates a calm, focused reading experience"
+      ]
+    }
+  ],
+  "constraints": [],
+  "nonGoals": [
+    "User authentication or private collections",
+    "Commenting or social features",
+    "Search or filtering functionality",
+    "Editing or deleting existing poems",
+    "Multi-language support"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

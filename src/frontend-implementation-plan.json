@@ -1,0 +1,111 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Create public poetry collection portal",
+  "requirements": [
+    {
+      "id": "REQ-3",
+      "summary": "Create a home page displaying all poems with titles and authors, enabling navigation to individual poem details",
+      "acceptanceCriteria": [
+        "Home page shows all poems in an organized layout",
+        "Each poem preview displays at least the title and author",
+        "Clicking on a poem navigates to its detail view"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Home.tsx",
+          "operation": "create",
+          "description": "Create the home page component that fetches all poems using the getAllPoems backend method and displays them in a grid or list layout. Each poem card shows the title and author with a clickable link to navigate to the detail page. Handle loading and error states appropriately."
+        },
+        {
+          "path": "frontend/src/components/PoemCard.tsx",
+          "operation": "create",
+          "description": "Create a reusable poem card component that displays a poem's title and author with styling consistent with the literary theme. The component should be clickable and accept poem data and onClick handler as props."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire the Home page into the application routing. Set up React Router routes to handle navigation between the home page, poem detail page, and admin form. Configure the Home page as the default route."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Create a poem detail page displaying complete poem information including title, author, content, and date created",
+      "acceptanceCriteria": [
+        "Detail page shows complete poem information",
+        "Content is readable and properly formatted",
+        "Page includes navigation back to the home page"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PoemDetail.tsx",
+          "operation": "create",
+          "description": "Create the poem detail page component that accepts a poem ID from the route parameters, fetches the specific poem using the getPoemById backend method, and displays the full poem including title, author, content text, and formatted date created. Include a navigation link or button to return to the home page. Handle loading and error states for missing or invalid poem IDs."
+        },
+        {
+          "path": "frontend/src/utils/formatDate.ts",
+          "operation": "create",
+          "description": "Create a utility function to format the Time (bigint nanoseconds timestamp) from the backend into a human-readable date string for display on the poem detail page."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add a route for the poem detail page with a dynamic poem ID parameter (e.g., /poem/:id) to enable navigation from the home page to individual poem views."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Create an admin interface with a form to add new poems to the collection",
+      "acceptanceCriteria": [
+        "Form includes input fields for title, content, and author",
+        "Form validates that required fields are filled",
+        "Successfully submitted poems appear in the collection"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AdminForm.tsx",
+          "operation": "create",
+          "description": "Create an admin form page component with input fields for title, content (textarea), and author. Implement form validation to ensure all required fields are filled before submission. On successful submission, call the submitPoem backend method with the form data, display a success message, and optionally redirect to the home page or reset the form. Handle error states if the backend submission fails."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add a route for the admin form page (e.g., /admin) and include a navigation link in the app header or menu to access the admin interface from other pages."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Apply a creative, literary-inspired visual theme with elegant typography and a clean layout emphasizing readability",
+      "acceptanceCriteria": [
+        "Design uses a cohesive color palette appropriate for literary content",
+        "Typography choices enhance readability and aesthetic appeal",
+        "Layout creates a calm, focused reading experience"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Update the global stylesheet to apply a literary-inspired theme with warm earth tones or soft pastels as the color palette. Configure elegant, readable typography using web-safe or imported fonts suitable for literary content. Ensure sufficient spacing and contrast for a contemplative reading atmosphere."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Customize the Tailwind configuration to extend the theme with the chosen color palette (warm earth tones or soft pastels), typography settings for headings and body text, and spacing adjustments that support a clean, readable layout."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "create",
+          "description": "Create a layout component that wraps all pages with consistent header, navigation, and footer styling. Apply the literary theme consistently across the application, ensuring a calm and focused user experience with appropriate padding and maximum content width for readability."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wrap all routed pages with the Layout component to ensure consistent application of the literary theme across the home page, poem detail page, and admin form."
+        }
+      ]
+    }
+  ]
+}

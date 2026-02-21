@@ -1,0 +1,21 @@
+{
+  "backend/main.mo": "Motoko actor defining a Poem type and managing a Map of poems with functions to submit new poems, retrieve all poems sorted by title, and get a poem by ID.",
+  "feature_evidence.json": "Feature evidence report documenting four implemented features: home page with poem grid, poem detail page, admin form for adding poems, and literary-inspired visual theme.",
+  "frontend-file-summaries.txt": "JSON object containing one-sentence summaries of all frontend source files including components, pages, hooks, and configuration files.",
+  "frontend/index.css": "Tailwind CSS configuration with custom CSS variables defining a warm earth-tone color palette in OKLCH format for both light and dark modes.",
+  "frontend/index.html": "HTML entry point with title 'Poetry Portal' and a root div that loads the React application via main.tsx.",
+  "frontend/src/App.tsx": "Main React app component configuring TanStack Router with three routes (home, poem detail, admin) wrapped in Layout and QueryClientProvider.",
+  "frontend/src/components/Layout.tsx": "Layout component providing sticky header with navigation, main content outlet, and footer with branding and caffeine.ai attribution link.",
+  "frontend/src/components/PoemCard.tsx": "Clickable card component displaying poem preview with title, author, date, truncated content, and hover effects that navigates to poem detail page.",
+  "frontend/src/hooks/useActor.ts": "React Query hook that creates and manages the backend actor instance based on Internet Identity authentication state, invalidating dependent queries on identity changes.",
+  "frontend/src/hooks/useInternetIdentity.ts": "React context provider and hook for Internet Identity authentication, managing login state, identity persistence, and AuthClient lifecycle.",
+  "frontend/src/hooks/useQueries.ts": "Custom React Query hooks for fetching all poems, fetching a poem by ID, and submitting new poems with automatic cache invalidation on success.",
+  "frontend/src/index.css": "Global CSS file that imports Google Fonts (Crimson Text, Lora, Inter), configures Tailwind, and defines custom CSS variables for a warm earth-tone color scheme with light/dark mode support using OKLCH color space.",
+  "frontend/src/main.tsx": "Application entry point that sets up React root with QueryClient for data fetching and InternetIdentityProvider for authentication, then renders the App component.",
+  "frontend/src/pages/AdminForm.tsx": "Admin form page component for adding new poems with fields for title, author, and content; includes form validation, loading states, and success feedback before redirecting to home.",
+  "frontend/src/pages/Home.tsx": "Home page component that displays all poems in a responsive grid layout using PoemCard components, with loading and empty states.",
+  "frontend/src/pages/PoemDetail.tsx": "Poem detail page component that displays a single poem's full content, title, author, and creation date with navigation back to the collection.",
+  "frontend/src/utils/formatDate.ts": "Utility function that converts backend Time type (nanoseconds as BigInt) to a human-readable date string in 'Month Day, Year' format.",
+  "frontend/tailwind.config.js": "Tailwind CSS configuration that extends the default theme with custom colors using OKLCH color space, custom fonts (Inter, Crimson Text, Lora), animations, and includes typography and container-queries plugins.",
+  "project_state.json": "Project state tracking file documenting the Poetry Portal project with completed features (home page, detail page, admin form, visual theme) and pending backend requirements (data model, CRUD methods)."
+}
