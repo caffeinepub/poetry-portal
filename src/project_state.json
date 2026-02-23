@@ -1,52 +1,35 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "International Gojri Maa Boli Adab - A poetry website with collections, search, optional login system with Internet Identity, in-app notifications for new poetry (for logged-in users), and download buttons for poetry content (images direct download, text poetry converted to image format for download)",
+  "summary": "Poetry web app with footer, basic admin system, and notification system",
   "architectural_notes": [
-    "Uses Internet Identity for optional authentication",
-    "In-app notification system for logged-in users (free, no email notifications)",
-    "Text-to-image conversion for poetry downloads"
+    "Using existing notification system for new poetry alerts",
+    "Admin assignment is manual (by email/username) to keep it simple and reliable"
   ],
   "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-implement-optional-internet-identity-login-system-that-allows-users-to-browse-all-content-without-logging-in-but-enables-notifications-when-logged-in",
-      "title": "Implement optional Internet Identity login system that allows users to browse all content without logging in, but enables notifications when logged in",
+      "id": "feature-add-a-permanent-footer-with-the-text-made-by-sc05-sohail-ch-to-all-pages-in-the-application",
+      "title": "Add a permanent footer with the text 'Made by SC05 Sohail Ch' to all pages in the application",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-in-app-notification-system-that-displays-alerts-to-logged-in-users-when-new-poetry-is-added-to-the-platform",
-      "title": "Add in-app notification system that displays alerts to logged-in users when new poetry is added to the platform",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-download-button-for-image-type-poems-that-enables-direct-image-file-download",
-      "title": "Add download button for image-type poems that enables direct image file download",
+      "id": "feature-add-a-frontend-interface-for-manually-assigning-admin-privileges-to-users-by-email-or-username",
+      "title": "Add a frontend interface for manually assigning admin privileges to users by email or username",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-download-button-for-text-type-poems-that-converts-the-text-content-into-an-image-format-poster-card-style-and-downloads-it",
-      "title": "Add download button for text-type poems that converts the text content into an image format (poster/card style) and downloads it",
+      "id": "feature-implement-in-app-notification-system-that-notifies-logged-in-users-when-new-poetry-is-added-to-the-platform",
+      "title": "Implement in-app notification system that notifies logged-in users when new poetry is added to the platform",
       "reqIds": [
         "REQ-4"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-website-title-and-branding-from-international-gojri-maa-booli-adab-to-international-gojri-maa-boli-adab-in-both-the-browser-tab-title-and-header-display",
-      "title": "Update website title and branding from 'International Gojri Maa Booli Adab' to 'International Gojri Maa Boli Adab' in both the browser tab title and header display",
-      "reqIds": [
-        "REQ-5"
       ],
       "version": 1
     }
@@ -54,26 +37,32 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Optional login system using Internet Identity - users can browse without login but logged-in users get notifications",
+      "summary": "Add footer 'Made by SC05 Sohail Ch' to all pages",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "In-app notification system (free) - show notifications to logged-in users when new poetry is added",
-      "reqIds": [
-        "AR-1"
-      ],
+      "summary": "Basic admin system - manually assign admin role to specific users by email/username",
+      "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Download buttons for poetry - direct image download for image poetry, convert text poetry to image format for download",
+      "summary": "In-app notification system for logged-in users when new poetry is added",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Implement a basic admin system that allows manually assigning admin role to specific users by their email or username",
+      "reqIds": [
+        "REQ-2"
+      ],
       "status": "pending"
     }
   ],
-  "projectName": "International Gojri Maa Boli Adab",
+  "projectName": "Gojri Poetry Platform",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
 import type { Poem, CollectionView, PoemSearchResult, ExternalBlob, UserProfile, Notification } from '../backend';
-import { PoemType } from '../backend';
+import { PoemType, UserRole } from '../backend';
+import type { Principal } from '@dfinity/principal';
 
 export function useGetAllPoems() {
   const { actor, isFetching } = useActor();
@@ -53,6 +54,8 @@ export function useSubmitPoem() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['poems'] });
       queryClient.invalidateQueries({ queryKey: ['collections'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['unreadNotificationsCount'] });
     },
   });
 }
@@ -219,6 +222,7 @@ export function useGetNotifications() {
       return actor.getNotifications();
     },
     enabled: !!actor && !isFetching,
+    refetchInterval: 30000, // Refetch every 30 seconds for new notifications
   });
 }
 
@@ -248,6 +252,34 @@ export function useMarkNotificationAsRead() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
       queryClient.invalidateQueries({ queryKey: ['unreadNotificationsCount'] });
+    },
+  });
+}
+
+export function useIsCallerAdmin() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<boolean>({
+    queryKey: ['isCallerAdmin'],
+    queryFn: async () => {
+      if (!actor) return false;
+      return actor.isCallerAdmin();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function useAssignUserRole() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ user, role }: { user: Principal; role: UserRole }) => {
+      if (!actor) throw new Error('Actor not initialized');
+      return actor.assignCallerUserRole(user, role);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['isCallerAdmin'] });
     },
   });
 }

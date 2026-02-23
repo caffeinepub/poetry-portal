@@ -11,7 +11,6 @@ import Principal "mo:core/Principal";
 import Storage "blob-storage/Storage";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
-
 import MixinStorage "blob-storage/Mixin";
 
 actor {
@@ -20,6 +19,7 @@ actor {
   include MixinStorage();
 
   public type UserProfile = { name : Text };
+
   public type CollectionView = {
     id : Nat;
     name : Text;
@@ -89,7 +89,7 @@ actor {
     content : Text,
     author : Text,
     poemType : PoemType,
-    imageUrl : ?Storage.ExternalBlob
+    imageUrl : ?Storage.ExternalBlob,
   ) : async Nat {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can submit poems");

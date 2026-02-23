@@ -4,7 +4,7 @@ import { formatDate } from '../utils/formatDate';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Check, Loader2 } from 'lucide-react';
+import { Check, Loader2, BookOpen } from 'lucide-react';
 
 export default function NotificationPanel() {
   const { data: notifications, isLoading } = useGetNotifications();
@@ -49,21 +49,25 @@ export default function NotificationPanel() {
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 space-y-1">
-                    <p className="text-sm font-medium leading-snug">
-                      {notification.message}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {formatDate(notification.timestamp)}
-                    </p>
+                  <div className="flex items-start gap-2 flex-1">
+                    <BookOpen className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium leading-snug">
+                        {notification.message}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDate(notification.timestamp)}
+                      </p>
+                    </div>
                   </div>
                   {!notification.read && (
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-8 w-8 p-0"
+                      className="h-8 w-8 p-0 flex-shrink-0"
                       onClick={() => handleMarkAsRead(index)}
                       disabled={markAsRead.isPending}
+                      title="Mark as read"
                     >
                       <Check className="h-4 w-4" />
                     </Button>

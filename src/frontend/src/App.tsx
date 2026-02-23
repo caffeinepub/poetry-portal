@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import PoemDetail from './pages/PoemDetail';
 import AdminForm from './pages/AdminForm';
 import CollectionManager from './pages/CollectionManager';
+import AdminPanel from './pages/AdminPanel';
 import Layout from './components/Layout';
 import UserProfileSetup from './components/UserProfileSetup';
 
@@ -42,8 +43,21 @@ const collectionManagerRoute = createRoute({
   component: CollectionManager,
 });
 
+// Admin panel route for user management
+const adminPanelRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/users',
+  component: AdminPanel,
+});
+
 // Create the route tree
-const routeTree = rootRoute.addChildren([indexRoute, poemRoute, adminRoute, collectionManagerRoute]);
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  poemRoute,
+  adminRoute,
+  collectionManagerRoute,
+  adminPanelRoute,
+]);
 
 // Create the router
 const router = createRouter({ routeTree });

@@ -1,130 +1,93 @@
 {
   "kind": "build_request",
-  "title": "Add optional login, notifications, and download features",
-  "projectName": "International Gojri Maa Boli Adab",
+  "title": "Add footer, basic admin system, and notification system",
+  "projectName": "Gojri Poetry Platform",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Implement optional Internet Identity login system that allows users to browse all content without logging in, but enables notifications when logged in",
-      "target": "both",
+      "text": "Add a permanent footer with the text 'Made by SC05 Sohail Ch' to all pages in the application",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1",
-          "msg-2",
-          "msg-3"
+          "msg-5"
         ],
         "quotes": [
-          "Optional login with Internet Identity - log in karne walon ko in-app notifications milenge",
-          "bina login ke bhi sab browse kar sakte hain"
+          "Footer: 'Made by SC05 Sohail Ch' har page pe permanently"
         ]
       },
       "acceptanceCriteria": [
-        "Users can view all poetry content without logging in",
-        "Login button is visible in header for unauthenticated users",
-        "Logged-in users see their authentication status in header",
-        "All existing browsing functionality (collections, search, poem viewing) works without authentication"
+        "Footer appears on all pages with the exact text 'Made by SC05 Sohail Ch'",
+        "Footer is styled consistently with the existing design",
+        "Footer remains visible at the bottom of the page"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Add in-app notification system that displays alerts to logged-in users when new poetry is added to the platform",
-      "target": "both",
+      "text": "Implement a basic admin system that allows manually assigning admin role to specific users by their email or username",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-1",
-          "msg-2",
-          "msg-3"
+          "msg-5"
         ],
         "quotes": [
-          "jab nayi poetry add hogi toh logged-in users ko website par notification dikhega (free feature)",
-          "Jab nayi poetry add ho toh logged-in users ko notification dikhega"
+          "Basic Admin System: Specific users ko manually admin banane ka system (email/username se)"
         ]
       },
       "acceptanceCriteria": [
-        "Backend tracks when new poems are added with timestamps",
-        "Backend provides endpoint to fetch notifications for logged-in users",
-        "Frontend displays notification badge or icon when new poetry is available",
-        "Notifications are only visible to authenticated users",
-        "Users can view and clear their notifications"
+        "Backend provides a function to assign admin role to users by email or username",
+        "Admin status is persisted in user profiles",
+        "Only users with admin role can access admin functions like adding/editing poetry"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Add download button for image-type poems that enables direct image file download",
+      "text": "Add a frontend interface for manually assigning admin privileges to users by email or username",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2",
-          "msg-3"
+          "msg-5"
         ],
         "quotes": [
-          "Image wali poetry: Direct image download",
-          "images direct download hongi"
+          "Aap specific users ko admin bana sakte hain (manually email/username se)"
         ]
       },
       "acceptanceCriteria": [
-        "Download button appears on poem detail page for image-type poems",
-        "Clicking download button triggers browser download of the poem image",
-        "Downloaded file has appropriate filename based on poem title or ID",
-        "Download works for all existing image poems"
+        "Admin panel includes a form to assign admin role by entering email or username",
+        "Form provides feedback on successful admin assignment",
+        "Only existing admins can access this admin assignment interface"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Add download button for text-type poems that converts the text content into an image format (poster/card style) and downloads it",
-      "target": "frontend",
+      "text": "Implement in-app notification system that notifies logged-in users when new poetry is added to the platform",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-2",
-          "msg-3"
+          "msg-5"
         ],
         "quotes": [
-          "Text wali poetry: Text ko image format mein convert karke download (beautiful card/poster ki tarah)",
-          "text poetry ko beautiful image format mein convert karke download"
+          "Notification System: Nayi poetry add hone pe logged-in users ko in-app notifications"
         ]
       },
       "acceptanceCriteria": [
-        "Download button appears on poem detail page for text-type poems",
-        "Text content is rendered into an attractive image format with appropriate styling",
-        "Generated image includes poem text, author name, and branding",
-        "Clicking download button triggers browser download of the generated image",
-        "Image format maintains readability and visual appeal"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Update website title and branding from 'International Gojri Maa Booli Adab' to 'International Gojri Maa Boli Adab' in both the browser tab title and header display",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-5",
-          "msg-6"
-        ],
-        "quotes": [
-          "naam mai thoda change karo international gojri maa boli adab",
-          "Naam Update - 'International Gojri Maa Boli Adab' dono jagah (website title aur browser tab)"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Browser tab title displays 'International Gojri Maa Boli Adab'",
-        "Header component displays 'International Gojri Maa Boli Adab'",
-        "Spelling change from 'Booli' to 'Boli' is applied consistently across all branding locations"
+        "When a new poem is added, all logged-in users receive an in-app notification",
+        "Notifications appear in the existing NotificationBell component",
+        "Notification message clearly indicates that new poetry has been added",
+        "Users can mark notifications as read"
       ]
     }
   ],
   "constraints": [
-    "All existing features (poetry submission, collections management, search functionality) must remain intact and functional",
-    "Login system must use Internet Identity as the authentication provider",
-    "Notification system must be free (no paid third-party services)",
-    "Users must be able to browse all content without requiring login"
+    "Use the existing notification system infrastructure (NotificationBell, NotificationPanel components)",
+    "Maintain the existing access control and authorization patterns from backend/main.mo",
+    "Preserve the current Internet Identity authentication flow"
   ],
   "nonGoals": [
-    "Email notifications for new poetry",
-    "Push notifications to mobile devices",
-    "User profiles or social features beyond basic authentication",
-    "Editing or deleting existing poems through the public interface",
-    "Real-time notifications using WebSockets"
+    "Complex admin request/approval workflows",
+    "Email-based notifications (only in-app notifications)",
+    "Automated admin role assignment",
+    "Notification preferences or customization"
   ],
   "imageRequirements": {
     "required": [],

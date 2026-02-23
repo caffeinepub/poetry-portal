@@ -1,13 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Add optional Internet Identity login, in-app notifications for logged-in users when new poetry is added, download functionality for both image and text poems, and update the website branding from "Booli" to "Boli".
+**Goal:** Add footer branding, implement basic admin system with manual role assignment, and introduce in-app notifications for new poetry.
 
 **Planned changes:**
-- Implement optional Internet Identity login system that allows browsing without authentication but enables notifications when logged in
-- Add in-app notification system that alerts logged-in users when new poetry is added to the platform
-- Add download button for image-type poems that enables direct image file download
-- Add download button for text-type poems that converts text content into a beautiful image format (poster/card style) and downloads it
-- Update website title and branding from "International Gojri Maa Booli Adab" to "International Gojri Maa Boli Adab" in browser tab and header
+- Add a permanent footer displaying "Made by SC05 Sohail Ch" on all pages
+- Implement backend functionality to manually assign admin role to users by email or username
+- Create admin panel interface for assigning admin privileges to specific users
+- Implement in-app notification system that alerts logged-in users when new poetry is added
 
-**User-visible outcome:** Users can continue browsing all poetry without logging in. Logged-in users will see notifications when new poetry is added. All poems (both image and text types) will have download buttons - images download directly, while text poems are converted into beautiful image cards before downloading. The website name is corrected to "International Gojri Maa Boli Adab" throughout.
+**User-visible outcome:** Users will see consistent branding in the footer across all pages. Admins can manually grant admin privileges to other users through an admin panel. All logged-in users will receive in-app notifications when new poetry is published on the platform.

@@ -143,15 +143,15 @@ export default function AdminForm() {
                 <div className="flex items-center space-x-2 border border-border rounded-lg p-4 flex-1 cursor-pointer hover:bg-accent/50 transition-colors">
                   <RadioGroupItem value="text" id="text" />
                   <Label htmlFor="text" className="flex items-center gap-2 cursor-pointer flex-1">
-                    <FileText className="h-5 w-5" />
-                    <span>Text Poetry</span>
+                    <FileText className="h-5 w-5 text-primary" />
+                    <span>Text Poem</span>
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2 border border-border rounded-lg p-4 flex-1 cursor-pointer hover:bg-accent/50 transition-colors">
                   <RadioGroupItem value="image" id="image" />
                   <Label htmlFor="image" className="flex items-center gap-2 cursor-pointer flex-1">
-                    <ImageIcon className="h-5 w-5" />
-                    <span>Image Poetry</span>
+                    <ImageIcon className="h-5 w-5 text-primary" />
+                    <span>Image Poem</span>
                   </Label>
                 </div>
               </RadioGroup>
@@ -164,67 +164,85 @@ export default function AdminForm() {
               </Label>
               <Input
                 id="title"
+                type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter the poem title"
-                disabled={isPending}
-                className="text-base"
+                placeholder="Enter poem title"
                 required
+                disabled={isPending}
               />
             </div>
 
             {/* Conditional Fields Based on Poem Type */}
-            {poemType === 'image' ? (
+            {poemType === 'text' ? (
               <>
-                {/* Image Upload */}
                 <div className="space-y-2">
-                  <Label htmlFor="image" className="text-base">
-                    Poetry Image <span className="text-destructive">*</span>
+                  <Label htmlFor="content" className="text-base">
+                    Content <span className="text-destructive">*</span>
                   </Label>
-                  <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
-                    {imagePreview ? (
-                      <div className="space-y-4">
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          className="max-h-64 mx-auto rounded-lg"
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setImageFile(null);
-                            setImagePreview(null);
-                          }}
-                          disabled={isPending}
-                        >
-                          Change Image
-                        </Button>
-                      </div>
-                    ) : (
-                      <label htmlFor="image" className="cursor-pointer block">
-                        <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                        <p className="text-sm text-muted-foreground mb-2">
-                          Click to upload or drag and drop
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          PNG, JPG, GIF up to 10MB
-                        </p>
-                        <Input
-                          id="image"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageChange}
-                          disabled={isPending}
-                          className="hidden"
-                        />
-                      </label>
-                    )}
-                  </div>
+                  <Textarea
+                    id="content"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    placeholder="Enter your poem here..."
+                    rows={10}
+                    required
+                    disabled={isPending}
+                    className="font-serif resize-none"
+                  />
                 </div>
 
-                {/* Description for Image */}
+                <div className="space-y-2">
+                  <Label htmlFor="author" className="text-base">
+                    Author <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="author"
+                    type="text"
+                    value={author}
+                    onChange={(e) => setAuthor(e.target.value)}
+                    placeholder="Enter author name"
+                    required
+                    disabled={isPending}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="image" className="text-base">
+                    Upload Image <span className="text-destructive">*</span>
+                  </Label>
+                  <div className="flex items-center gap-4">
+                    <Input
+                      id="image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      disabled={isPending}
+                      className="cursor-pointer"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      disabled={isPending}
+                      onClick={() => document.getElementById('image')?.click()}
+                    >
+                      <Upload className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  {imagePreview && (
+                    <div className="mt-4 border border-border rounded-lg overflow-hidden">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="w-full h-auto max-h-96 object-contain"
+                      />
+                    </div>
+                  )}
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="description" className="text-base">
                     Description (Optional)
@@ -233,47 +251,10 @@ export default function AdminForm() {
                     id="description"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    placeholder="Add a description or context for this image poetry..."
+                    placeholder="Add a description or caption for the image..."
+                    rows={3}
                     disabled={isPending}
-                    className="min-h-[100px] text-base resize-y"
                   />
-                </div>
-              </>
-            ) : (
-              <>
-                {/* Author Field */}
-                <div className="space-y-2">
-                  <Label htmlFor="author" className="text-base">
-                    Author <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    id="author"
-                    value={author}
-                    onChange={(e) => setAuthor(e.target.value)}
-                    placeholder="Enter the author's name"
-                    disabled={isPending}
-                    className="text-base"
-                    required
-                  />
-                </div>
-
-                {/* Content Field */}
-                <div className="space-y-2">
-                  <Label htmlFor="content" className="text-base">
-                    Poem Content <span className="text-destructive">*</span>
-                  </Label>
-                  <Textarea
-                    id="content"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    placeholder="Enter the poem content here..."
-                    disabled={isPending}
-                    className="min-h-[300px] font-serif text-base leading-relaxed resize-y"
-                    required
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Tip: Use line breaks to format your poem as desired
-                  </p>
                 </div>
               </>
             )}
@@ -281,45 +262,37 @@ export default function AdminForm() {
             {/* Upload Progress */}
             {isPending && uploadProgress > 0 && uploadProgress < 100 && (
               <div className="space-y-2">
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>Uploading image...</span>
-                  <span>{uploadProgress}%</span>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Uploading...</span>
+                  <span className="font-medium">{uploadProgress}%</span>
                 </div>
                 <Progress value={uploadProgress} className="h-2" />
               </div>
             )}
 
-            {/* Submit Buttons */}
-            <div className="flex gap-4 pt-4">
-              <Button
-                type="submit"
-                disabled={!isFormValid || isPending}
-                className="flex-1"
-              >
-                {isPending ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Submitting...
-                  </>
-                ) : showSuccess ? (
-                  <>
-                    <CheckCircle2 className="h-4 w-4 mr-2" />
-                    Submitted!
-                  </>
-                ) : (
-                  'Submit Poem'
-                )}
-              </Button>
-              
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate({ to: '/' })}
-                disabled={isPending}
-              >
-                Cancel
-              </Button>
-            </div>
+            {/* Success Message */}
+            {showSuccess && (
+              <div className="flex items-center gap-2 p-4 bg-green-500/10 border border-green-500/50 rounded-lg text-green-600">
+                <CheckCircle2 className="h-5 w-5" />
+                <span className="font-medium">Poem submitted successfully! All users will be notified.</span>
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={!isFormValid || isPending}
+            >
+              {isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  {uploadProgress > 0 && uploadProgress < 100 ? 'Uploading...' : 'Submitting...'}
+                </>
+              ) : (
+                'Submit Poem'
+              )}
+            </Button>
           </form>
         </CardContent>
       </Card>
