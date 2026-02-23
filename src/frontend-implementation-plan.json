@@ -1,109 +1,146 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Create public poetry collection portal",
+  "title": "Add optional login, notifications, and download features",
   "requirements": [
     {
-      "id": "REQ-3",
-      "summary": "Create a home page displaying all poems with titles and authors, enabling navigation to individual poem details",
+      "id": "REQ-1",
+      "summary": "Implement optional Internet Identity login that allows browsing without authentication and shows login status in header",
       "acceptanceCriteria": [
-        "Home page shows all poems in an organized layout",
-        "Each poem preview displays at least the title and author",
-        "Clicking on a poem navigates to its detail view"
+        "Users can view all poetry content without logging in",
+        "Login button is visible in header for unauthenticated users",
+        "Logged-in users see their authentication status in header",
+        "All existing browsing functionality (collections, search, poem viewing) works without authentication"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/Home.tsx",
-          "operation": "create",
-          "description": "Create the home page component that fetches all poems using the getAllPoems backend method and displays them in a grid or list layout. Each poem card shows the title and author with a clickable link to navigate to the detail page. Handle loading and error states appropriately."
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Add LoginButton component to header that displays authentication status and allows login/logout. Use the authorization component to handle Internet Identity authentication. Position the login button prominently in the header navigation area. Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/components/PoemCard.tsx",
+          "path": "frontend/src/components/LoginButton.tsx",
           "operation": "create",
-          "description": "Create a reusable poem card component that displays a poem's title and author with styling consistent with the literary theme. The component should be clickable and accept poem data and onClick handler as props."
+          "description": "Create a login button component using the authorization component's useInternetIdentity hook and following the login component pattern from the authorization usage instructions. Handle login/logout flows with proper state management and query cache clearing on logout. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/UserProfileSetup.tsx",
+          "operation": "create",
+          "description": "Create a modal component for first-time user profile setup that asks for the user's name using the authorization component's profile setup pattern. Use getCallerUserProfile and saveCallerUserProfile backend methods. Implement proper loading states to prevent modal flash as described in authorization usage instructions. Verify the component's usage instructions before implementing."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Wire the Home page into the application routing. Set up React Router routes to handle navigation between the home page, poem detail page, and admin form. Configure the Home page as the default route."
+          "description": "Add UserProfileSetup component to the app root level to handle first-time user profile creation after login. The modal should only appear when a logged-in user has no profile set up."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add React Query hooks for user profile operations: useGetCallerUserProfile, useSaveCallerUserProfile, and useGetUserProfile. Follow the authorization component's pattern for preventing profile setup modal flash with proper actor dependency handling. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Add in-app notification system that displays alerts to logged-in users when new poetry is added",
+      "acceptanceCriteria": [
+        "Backend tracks when new poems are added with timestamps",
+        "Backend provides endpoint to fetch notifications for logged-in users",
+        "Frontend displays notification badge or icon when new poetry is available",
+        "Notifications are only visible to authenticated users",
+        "Users can view and clear their notifications"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Add NotificationBell component to header that displays unread notification count badge for authenticated users only. Position it near the login button in the header navigation area."
+        },
+        {
+          "path": "frontend/src/components/NotificationBell.tsx",
+          "operation": "create",
+          "description": "Create notification bell icon component with badge showing unread count using useGetUnreadNotificationsCount hook. Only render for authenticated users. Clicking opens the NotificationPanel component. Use shadcn/ui Button and Badge components for consistent styling."
+        },
+        {
+          "path": "frontend/src/components/NotificationPanel.tsx",
+          "operation": "create",
+          "description": "Create dropdown panel component that displays list of notifications fetched from useGetNotifications hook. Show notification message and timestamp formatted with formatDate utility. Provide mark-as-read functionality using useMarkNotificationAsRead hook. Use shadcn/ui DropdownMenu components for the panel UI."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add React Query hooks for notification operations: useGetNotifications to fetch notification list, useGetUnreadNotificationsCount to get unread count, and useMarkNotificationAsRead mutation to mark individual notifications as read. Invalidate notification queries after marking as read to update the UI."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Add download button for image-type poems that enables direct image file download",
+      "acceptanceCriteria": [
+        "Download button appears on poem detail page for image-type poems",
+        "Clicking download button triggers browser download of the poem image",
+        "Downloaded file has appropriate filename based on poem title or ID",
+        "Download works for all existing image poems"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PoemDetail.tsx",
+          "operation": "modify",
+          "description": "Add download button for image-type poems that triggers browser download using the ExternalBlob's getDirectURL method and creates an anchor element to initiate download. Generate filename from poem title (sanitized) or poem ID. Position button below the image display area."
+        },
+        {
+          "path": "frontend/src/utils/downloadHelpers.ts",
+          "operation": "create",
+          "description": "Create utility functions for downloading files: downloadImageFromURL that accepts URL and filename, creates temporary anchor element, triggers download, and cleans up. Include filename sanitization function to create valid filenames from poem titles."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Create a poem detail page displaying complete poem information including title, author, content, and date created",
+      "summary": "Add download button for text-type poems that converts text into an attractive image format and downloads it",
       "acceptanceCriteria": [
-        "Detail page shows complete poem information",
-        "Content is readable and properly formatted",
-        "Page includes navigation back to the home page"
+        "Download button appears on poem detail page for text-type poems",
+        "Text content is rendered into an attractive image format with appropriate styling",
+        "Generated image includes poem text, author name, and branding",
+        "Clicking download button triggers browser download of the generated image",
+        "Image format maintains readability and visual appeal"
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/PoemDetail.tsx",
-          "operation": "create",
-          "description": "Create the poem detail page component that accepts a poem ID from the route parameters, fetches the specific poem using the getPoemById backend method, and displays the full poem including title, author, content text, and formatted date created. Include a navigation link or button to return to the home page. Handle loading and error states for missing or invalid poem IDs."
-        },
-        {
-          "path": "frontend/src/utils/formatDate.ts",
-          "operation": "create",
-          "description": "Create a utility function to format the Time (bigint nanoseconds timestamp) from the backend into a human-readable date string for display on the poem detail page."
-        },
-        {
-          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add a route for the poem detail page with a dynamic poem ID parameter (e.g., /poem/:id) to enable navigation from the home page to individual poem views."
+          "description": "Add download button for text-type poems that calls the generatePoemImage function to convert poem text into image format and triggers download. Position button below the text content display area, matching the placement of image download button."
+        },
+        {
+          "path": "frontend/src/utils/poemImageGenerator.ts",
+          "operation": "create",
+          "description": "Create function to generate attractive poster-style image from text poem using HTML5 Canvas API. Render poem text, author name, and 'International Gojri Maa Boli Adab' branding with appropriate typography and styling. Use warm earth tone colors from the theme. Return canvas as blob for download. Include proper text wrapping and formatting for readability."
+        },
+        {
+          "path": "frontend/src/utils/downloadHelpers.ts",
+          "operation": "modify",
+          "description": "Add downloadBlobAsImage function that accepts a blob and filename, creates object URL, triggers browser download via anchor element, and revokes object URL after download."
         }
       ]
     },
     {
       "id": "REQ-5",
-      "summary": "Create an admin interface with a form to add new poems to the collection",
+      "summary": "Update website title and branding from 'International Gojri Maa Booli Adab' to 'International Gojri Maa Boli Adab'",
       "acceptanceCriteria": [
-        "Form includes input fields for title, content, and author",
-        "Form validates that required fields are filled",
-        "Successfully submitted poems appear in the collection"
+        "Browser tab title displays 'International Gojri Maa Boli Adab'",
+        "Header component displays 'International Gojri Maa Boli Adab'",
+        "Spelling change from 'Booli' to 'Boli' is applied consistently across all branding locations"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/AdminForm.tsx",
-          "operation": "create",
-          "description": "Create an admin form page component with input fields for title, content (textarea), and author. Implement form validation to ensure all required fields are filled before submission. On successful submission, call the submitPoem backend method with the form data, display a success message, and optionally redirect to the home page or reset the form. Handle error states if the backend submission fails."
-        },
-        {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/index.html",
           "operation": "modify",
-          "description": "Add a route for the admin form page (e.g., /admin) and include a navigation link in the app header or menu to access the admin interface from other pages."
-        }
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "summary": "Apply a creative, literary-inspired visual theme with elegant typography and a clean layout emphasizing readability",
-      "acceptanceCriteria": [
-        "Design uses a cohesive color palette appropriate for literary content",
-        "Typography choices enhance readability and aesthetic appeal",
-        "Layout creates a calm, focused reading experience"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Update the global stylesheet to apply a literary-inspired theme with warm earth tones or soft pastels as the color palette. Configure elegant, readable typography using web-safe or imported fonts suitable for literary content. Ensure sufficient spacing and contrast for a contemplative reading atmosphere."
-        },
-        {
-          "path": "frontend/tailwind.config.js",
-          "operation": "modify",
-          "description": "Customize the Tailwind configuration to extend the theme with the chosen color palette (warm earth tones or soft pastels), typography settings for headings and body text, and spacing adjustments that support a clean, readable layout."
+          "description": "Update the document title tag from 'International Gojri Maa Booli Adab' to 'International Gojri Maa Boli Adab' to correct the spelling in the browser tab."
         },
         {
           "path": "frontend/src/components/Layout.tsx",
-          "operation": "create",
-          "description": "Create a layout component that wraps all pages with consistent header, navigation, and footer styling. Apply the literary theme consistently across the application, ensuring a calm and focused user experience with appropriate padding and maximum content width for readability."
-        },
-        {
-          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Wrap all routed pages with the Layout component to ensure consistent application of the literary theme across the home page, poem detail page, and admin form."
+          "description": "Update the header branding text from 'International Gojri Maa Booli Adab' to 'International Gojri Maa Boli Adab' to correct the spelling in the site header."
         }
       ]
     }

@@ -2,19 +2,67 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-create-a-home-page-displaying-a-grid-or-list-of-all-poems-with-their-titles-and-authors-allowing-users-to-click-through-to-read-the-full-poem",
-      "featureTitle": "Create a home page displaying a grid or list of all poems with their titles and authors, allowing users to click through to read the full poem",
+      "featureId": "feature-implement-optional-internet-identity-login-system-that-allows-users-to-browse-all-content-without-logging-in-but-enables-notifications-when-logged-in",
+      "featureTitle": "Implement optional Internet Identity login system that allows users to browse all content without logging in, but enables notifications when logged in",
       "files": [
         "frontend/src/App.tsx",
-        "frontend/src/components/PoemCard.tsx",
-        "frontend/src/pages/Home.tsx"
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/components/LoginButton.tsx",
+        "frontend/src/components/UserProfileSetup.tsx",
+        "frontend/src/hooks/useQueries.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-in-app-notification-system-that-displays-alerts-to-logged-in-users-when-new-poetry-is-added-to-the-platform",
+      "featureTitle": "Add in-app notification system that displays alerts to logged-in users when new poetry is added to the platform",
+      "files": [
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/components/NotificationBell.tsx",
+        "frontend/src/components/NotificationPanel.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-download-button-for-image-type-poems-that-enables-direct-image-file-download",
+      "featureTitle": "Add download button for image-type poems that enables direct image file download",
+      "files": [
+        "frontend/src/pages/PoemDetail.tsx",
+        "frontend/src/utils/downloadHelpers.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
       ],
       "testIds": [
         "REQ-3"
@@ -22,19 +70,21 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-create-a-poem-detail-page-that-displays-the-full-poem-content-including-title-author-content-text-and-date-created",
-      "featureTitle": "Create a poem detail page that displays the full poem content including title, author, content text, and date created",
+      "featureId": "feature-add-download-button-for-text-type-poems-that-converts-the-text-content-into-an-image-format-poster-card-style-and-downloads-it",
+      "featureTitle": "Add download button for text-type poems that converts the text content into an image format (poster/card style) and downloads it",
       "files": [
-        "frontend/src/App.tsx",
         "frontend/src/pages/PoemDetail.tsx",
-        "frontend/src/utils/formatDate.ts"
+        "frontend/src/utils/downloadHelpers.ts",
+        "frontend/src/utils/poemImageGenerator.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
       ],
       "testIds": [
         "REQ-4"
@@ -42,42 +92,23 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-create-an-admin-interface-or-form-to-add-new-poems-to-the-collection-with-fields-for-title-content-and-author",
-      "featureTitle": "Create an admin interface or form to add new poems to the collection with fields for title, content, and author",
+      "featureId": "feature-update-website-title-and-branding-from-international-gojri-maa-booli-adab-to-international-gojri-maa-boli-adab-in-both-the-browser-tab-title-and-header-display",
+      "featureTitle": "Update website title and branding from 'International Gojri Maa Booli Adab' to 'International Gojri Maa Boli Adab' in both the browser tab title and header display",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/AdminForm.tsx"
+        "frontend/index.html",
+        "frontend/src/components/Layout.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
       ],
       "testIds": [
         "REQ-5"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-apply-a-creative-literary-inspired-visual-theme-with-elegant-typography-warm-earth-tones-or-soft-pastels-and-a-clean-layout-that-emphasizes-readability-and-creates-a-contemplative-atmosphere-suitable-for-poetry",
-      "featureTitle": "Apply a creative, literary-inspired visual theme with elegant typography, warm earth tones or soft pastels, and a clean layout that emphasizes readability and creates a contemplative atmosphere suitable for poetry",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/Layout.tsx",
-        "frontend/src/index.css",
-        "frontend/tailwind.config.js"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-6"
       ],
       "confidence": "high"
     }

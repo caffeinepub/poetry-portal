@@ -1,14 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Build a public poetry collection portal where users can browse and read poems, and administrators can add new poems to the collection.
+**Goal:** Add optional Internet Identity login, in-app notifications for logged-in users when new poetry is added, download functionality for both image and text poems, and update the website branding from "Booli" to "Boli".
 
 **Planned changes:**
-- Create backend data model for poems with title, content, author, dateCreated, and unique identifier
-- Implement backend methods to add poems, retrieve all poems, and retrieve individual poems by ID
-- Build home page displaying all poems in a grid/list with titles and authors
-- Create poem detail page showing full poem content with all metadata
-- Add admin form interface to submit new poems with title, content, and author fields
-- Apply literary-inspired visual theme with elegant typography, warm earth tones or soft pastels, and clean readable layout
+- Implement optional Internet Identity login system that allows browsing without authentication but enables notifications when logged in
+- Add in-app notification system that alerts logged-in users when new poetry is added to the platform
+- Add download button for image-type poems that enables direct image file download
+- Add download button for text-type poems that converts text content into a beautiful image format (poster/card style) and downloads it
+- Update website title and branding from "International Gojri Maa Booli Adab" to "International Gojri Maa Boli Adab" in browser tab and header
 
-**User-visible outcome:** Users can browse a collection of poems on the home page, click to read full poems on detail pages, and administrators can add new poems through a submission form. The interface features a contemplative, literary aesthetic optimized for reading poetry.
+**User-visible outcome:** Users can continue browsing all poetry without logging in. Logged-in users will see notifications when new poetry is added. All poems (both image and text types) will have download buttons - images download directly, while text poems are converted into beautiful image cards before downloading. The website name is corrected to "International Gojri Maa Boli Adab" throughout.

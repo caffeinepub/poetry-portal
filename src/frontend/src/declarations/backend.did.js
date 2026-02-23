@@ -8,37 +8,219 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const _CaffeineStorageCreateCertificateResult = IDL.Record({
+  'method' : IDL.Text,
+  'blob_hash' : IDL.Text,
+});
+export const _CaffeineStorageRefillInformation = IDL.Record({
+  'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const _CaffeineStorageRefillResult = IDL.Record({
+  'success' : IDL.Opt(IDL.Bool),
+  'topped_up_amount' : IDL.Opt(IDL.Nat),
+});
+export const UserRole = IDL.Variant({
+  'admin' : IDL.Null,
+  'user' : IDL.Null,
+  'guest' : IDL.Null,
+});
 export const Time = IDL.Int;
+export const CollectionView = IDL.Record({
+  'id' : IDL.Nat,
+  'poemIds' : IDL.Vec(IDL.Nat),
+  'dateCreated' : Time,
+  'name' : IDL.Text,
+  'description' : IDL.Text,
+});
+export const PoemType = IDL.Variant({ 'text' : IDL.Null, 'image' : IDL.Null });
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const Poem = IDL.Record({
   'id' : IDL.Nat,
   'title' : IDL.Text,
   'content' : IDL.Text,
   'dateCreated' : Time,
+  'poemType' : PoemType,
   'author' : IDL.Text,
+  'imageUrl' : IDL.Opt(ExternalBlob),
+});
+export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const Notification = IDL.Record({
+  'read' : IDL.Bool,
+  'message' : IDL.Text,
+  'timestamp' : Time,
+});
+export const PoemSearchResult = IDL.Record({
+  'poem' : Poem,
+  'collectionNames' : IDL.Vec(IDL.Text),
 });
 
 export const idlService = IDL.Service({
+  '_caffeineStorageBlobIsLive' : IDL.Func(
+      [IDL.Vec(IDL.Nat8)],
+      [IDL.Bool],
+      ['query'],
+    ),
+  '_caffeineStorageBlobsToDelete' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      ['query'],
+    ),
+  '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+      [IDL.Vec(IDL.Vec(IDL.Nat8))],
+      [],
+      [],
+    ),
+  '_caffeineStorageCreateCertificate' : IDL.Func(
+      [IDL.Text],
+      [_CaffeineStorageCreateCertificateResult],
+      [],
+    ),
+  '_caffeineStorageRefillCashier' : IDL.Func(
+      [IDL.Opt(_CaffeineStorageRefillInformation)],
+      [_CaffeineStorageRefillResult],
+      [],
+    ),
+  '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
+  '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addPoemToCollection' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
+  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'createCollection' : IDL.Func([IDL.Text, IDL.Text], [IDL.Nat], []),
+  'deleteCollection' : IDL.Func([IDL.Nat], [], []),
+  'getAllCollections' : IDL.Func([], [IDL.Vec(CollectionView)], ['query']),
   'getAllPoems' : IDL.Func([], [IDL.Vec(Poem)], ['query']),
+  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
   'getPoemById' : IDL.Func([IDL.Nat], [Poem], ['query']),
-  'submitPoem' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+  'getPoemsByCollectionId' : IDL.Func([IDL.Nat], [IDL.Vec(Poem)], ['query']),
+  'getUnreadNotificationsCount' : IDL.Func([], [IDL.Nat], ['query']),
+  'getUserProfile' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Opt(UserProfile)],
+      ['query'],
+    ),
+  'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'markNotificationAsRead' : IDL.Func([IDL.Nat], [], []),
+  'removePoemFromCollection' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
+  'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'searchPoems' : IDL.Func([IDL.Text], [IDL.Vec(PoemSearchResult)], ['query']),
+  'submitPoem' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, PoemType, IDL.Opt(ExternalBlob)],
+      [IDL.Nat],
+      [],
+    ),
+  'updatePoem' : IDL.Func([IDL.Nat, Poem], [], ['oneway']),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const _CaffeineStorageCreateCertificateResult = IDL.Record({
+    'method' : IDL.Text,
+    'blob_hash' : IDL.Text,
+  });
+  const _CaffeineStorageRefillInformation = IDL.Record({
+    'proposed_top_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const _CaffeineStorageRefillResult = IDL.Record({
+    'success' : IDL.Opt(IDL.Bool),
+    'topped_up_amount' : IDL.Opt(IDL.Nat),
+  });
+  const UserRole = IDL.Variant({
+    'admin' : IDL.Null,
+    'user' : IDL.Null,
+    'guest' : IDL.Null,
+  });
   const Time = IDL.Int;
+  const CollectionView = IDL.Record({
+    'id' : IDL.Nat,
+    'poemIds' : IDL.Vec(IDL.Nat),
+    'dateCreated' : Time,
+    'name' : IDL.Text,
+    'description' : IDL.Text,
+  });
+  const PoemType = IDL.Variant({ 'text' : IDL.Null, 'image' : IDL.Null });
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
   const Poem = IDL.Record({
     'id' : IDL.Nat,
     'title' : IDL.Text,
     'content' : IDL.Text,
     'dateCreated' : Time,
+    'poemType' : PoemType,
     'author' : IDL.Text,
+    'imageUrl' : IDL.Opt(ExternalBlob),
+  });
+  const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const Notification = IDL.Record({
+    'read' : IDL.Bool,
+    'message' : IDL.Text,
+    'timestamp' : Time,
+  });
+  const PoemSearchResult = IDL.Record({
+    'poem' : Poem,
+    'collectionNames' : IDL.Vec(IDL.Text),
   });
   
   return IDL.Service({
+    '_caffeineStorageBlobIsLive' : IDL.Func(
+        [IDL.Vec(IDL.Nat8)],
+        [IDL.Bool],
+        ['query'],
+      ),
+    '_caffeineStorageBlobsToDelete' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        ['query'],
+      ),
+    '_caffeineStorageConfirmBlobDeletion' : IDL.Func(
+        [IDL.Vec(IDL.Vec(IDL.Nat8))],
+        [],
+        [],
+      ),
+    '_caffeineStorageCreateCertificate' : IDL.Func(
+        [IDL.Text],
+        [_CaffeineStorageCreateCertificateResult],
+        [],
+      ),
+    '_caffeineStorageRefillCashier' : IDL.Func(
+        [IDL.Opt(_CaffeineStorageRefillInformation)],
+        [_CaffeineStorageRefillResult],
+        [],
+      ),
+    '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
+    '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addPoemToCollection' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
+    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'createCollection' : IDL.Func([IDL.Text, IDL.Text], [IDL.Nat], []),
+    'deleteCollection' : IDL.Func([IDL.Nat], [], []),
+    'getAllCollections' : IDL.Func([], [IDL.Vec(CollectionView)], ['query']),
     'getAllPoems' : IDL.Func([], [IDL.Vec(Poem)], ['query']),
+    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getNotifications' : IDL.Func([], [IDL.Vec(Notification)], ['query']),
     'getPoemById' : IDL.Func([IDL.Nat], [Poem], ['query']),
-    'submitPoem' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+    'getPoemsByCollectionId' : IDL.Func([IDL.Nat], [IDL.Vec(Poem)], ['query']),
+    'getUnreadNotificationsCount' : IDL.Func([], [IDL.Nat], ['query']),
+    'getUserProfile' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Opt(UserProfile)],
+        ['query'],
+      ),
+    'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'markNotificationAsRead' : IDL.Func([IDL.Nat], [], []),
+    'removePoemFromCollection' : IDL.Func([IDL.Nat, IDL.Nat], [], []),
+    'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'searchPoems' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(PoemSearchResult)],
+        ['query'],
+      ),
+    'submitPoem' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, PoemType, IDL.Opt(ExternalBlob)],
+        [IDL.Nat],
+        [],
+      ),
+    'updatePoem' : IDL.Func([IDL.Nat, Poem], [], ['oneway']),
   });
 };
 

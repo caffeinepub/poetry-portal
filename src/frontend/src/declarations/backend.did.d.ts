@@ -10,18 +10,90 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface CollectionView {
+  'id' : bigint,
+  'poemIds' : Array<bigint>,
+  'dateCreated' : Time,
+  'name' : string,
+  'description' : string,
+}
+export type ExternalBlob = Uint8Array;
+export interface Notification {
+  'read' : boolean,
+  'message' : string,
+  'timestamp' : Time,
+}
 export interface Poem {
   'id' : bigint,
   'title' : string,
   'content' : string,
   'dateCreated' : Time,
+  'poemType' : PoemType,
   'author' : string,
+  'imageUrl' : [] | [ExternalBlob],
 }
+export interface PoemSearchResult {
+  'poem' : Poem,
+  'collectionNames' : Array<string>,
+}
+export type PoemType = { 'text' : null } |
+  { 'image' : null };
 export type Time = bigint;
+export interface UserProfile { 'name' : string }
+export type UserRole = { 'admin' : null } |
+  { 'user' : null } |
+  { 'guest' : null };
+export interface _CaffeineStorageCreateCertificateResult {
+  'method' : string,
+  'blob_hash' : string,
+}
+export interface _CaffeineStorageRefillInformation {
+  'proposed_top_up_amount' : [] | [bigint],
+}
+export interface _CaffeineStorageRefillResult {
+  'success' : [] | [boolean],
+  'topped_up_amount' : [] | [bigint],
+}
 export interface _SERVICE {
+  '_caffeineStorageBlobIsLive' : ActorMethod<[Uint8Array], boolean>,
+  '_caffeineStorageBlobsToDelete' : ActorMethod<[], Array<Uint8Array>>,
+  '_caffeineStorageConfirmBlobDeletion' : ActorMethod<
+    [Array<Uint8Array>],
+    undefined
+  >,
+  '_caffeineStorageCreateCertificate' : ActorMethod<
+    [string],
+    _CaffeineStorageCreateCertificateResult
+  >,
+  '_caffeineStorageRefillCashier' : ActorMethod<
+    [[] | [_CaffeineStorageRefillInformation]],
+    _CaffeineStorageRefillResult
+  >,
+  '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
+  '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addPoemToCollection' : ActorMethod<[bigint, bigint], undefined>,
+  'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'createCollection' : ActorMethod<[string, string], bigint>,
+  'deleteCollection' : ActorMethod<[bigint], undefined>,
+  'getAllCollections' : ActorMethod<[], Array<CollectionView>>,
   'getAllPoems' : ActorMethod<[], Array<Poem>>,
+  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
+  'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getNotifications' : ActorMethod<[], Array<Notification>>,
   'getPoemById' : ActorMethod<[bigint], Poem>,
-  'submitPoem' : ActorMethod<[string, string, string], undefined>,
+  'getPoemsByCollectionId' : ActorMethod<[bigint], Array<Poem>>,
+  'getUnreadNotificationsCount' : ActorMethod<[], bigint>,
+  'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'isCallerAdmin' : ActorMethod<[], boolean>,
+  'markNotificationAsRead' : ActorMethod<[bigint], undefined>,
+  'removePoemFromCollection' : ActorMethod<[bigint, bigint], undefined>,
+  'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'searchPoems' : ActorMethod<[string], Array<PoemSearchResult>>,
+  'submitPoem' : ActorMethod<
+    [string, string, string, PoemType, [] | [ExternalBlob]],
+    bigint
+  >,
+  'updatePoem' : ActorMethod<[bigint, Poem], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

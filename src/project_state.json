@@ -1,40 +1,52 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Web portal for public poetry collection",
-  "architectural_notes": [],
+  "summary": "International Gojri Maa Boli Adab - A poetry website with collections, search, optional login system with Internet Identity, in-app notifications for new poetry (for logged-in users), and download buttons for poetry content (images direct download, text poetry converted to image format for download)",
+  "architectural_notes": [
+    "Uses Internet Identity for optional authentication",
+    "In-app notification system for logged-in users (free, no email notifications)",
+    "Text-to-image conversion for poetry downloads"
+  ],
   "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-create-a-home-page-displaying-a-grid-or-list-of-all-poems-with-their-titles-and-authors-allowing-users-to-click-through-to-read-the-full-poem",
-      "title": "Create a home page displaying a grid or list of all poems with their titles and authors, allowing users to click through to read the full poem",
+      "id": "feature-implement-optional-internet-identity-login-system-that-allows-users-to-browse-all-content-without-logging-in-but-enables-notifications-when-logged-in",
+      "title": "Implement optional Internet Identity login system that allows users to browse all content without logging in, but enables notifications when logged in",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-in-app-notification-system-that-displays-alerts-to-logged-in-users-when-new-poetry-is-added-to-the-platform",
+      "title": "Add in-app notification system that displays alerts to logged-in users when new poetry is added to the platform",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-download-button-for-image-type-poems-that-enables-direct-image-file-download",
+      "title": "Add download button for image-type poems that enables direct image file download",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-create-a-poem-detail-page-that-displays-the-full-poem-content-including-title-author-content-text-and-date-created",
-      "title": "Create a poem detail page that displays the full poem content including title, author, content text, and date created",
+      "id": "feature-add-download-button-for-text-type-poems-that-converts-the-text-content-into-an-image-format-poster-card-style-and-downloads-it",
+      "title": "Add download button for text-type poems that converts the text content into an image format (poster/card style) and downloads it",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-create-an-admin-interface-or-form-to-add-new-poems-to-the-collection-with-fields-for-title-content-and-author",
-      "title": "Create an admin interface or form to add new poems to the collection with fields for title, content, and author",
+      "id": "feature-update-website-title-and-branding-from-international-gojri-maa-booli-adab-to-international-gojri-maa-boli-adab-in-both-the-browser-tab-title-and-header-display",
+      "title": "Update website title and branding from 'International Gojri Maa Booli Adab' to 'International Gojri Maa Boli Adab' in both the browser tab title and header display",
       "reqIds": [
         "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-apply-a-creative-literary-inspired-visual-theme-with-elegant-typography-warm-earth-tones-or-soft-pastels-and-a-clean-layout-that-emphasizes-readability-and-creates-a-contemplative-atmosphere-suitable-for-poetry",
-      "title": "Apply a creative, literary-inspired visual theme with elegant typography, warm earth tones or soft pastels, and a clean layout that emphasizes readability and creates a contemplative atmosphere suitable for poetry",
-      "reqIds": [
-        "REQ-6"
       ],
       "version": 1
     }
@@ -42,29 +54,26 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Create web portal for poetry collection",
+      "summary": "Optional login system using Internet Identity - users can browse without login but logged-in users get notifications",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Create a backend data model to store poems with fields: title (text), content (text), author (text), dateCreated (timestamp), and a unique identifier",
+      "summary": "In-app notification system (free) - show notifications to logged-in users when new poetry is added",
       "reqIds": [
-        "REQ-1"
+        "AR-1"
       ],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Implement backend methods to add new poems, retrieve all poems, and retrieve a single poem by ID",
-      "reqIds": [
-        "REQ-2"
-      ],
+      "summary": "Download buttons for poetry - direct image download for image poetry, convert text poetry to image format for download",
+      "reqIds": [],
       "status": "pending"
     }
   ],
-  "gameProjectType": "none",
-  "projectName": "Poetry Portal",
+  "projectName": "International Gojri Maa Boli Adab",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

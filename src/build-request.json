@@ -1,107 +1,130 @@
 {
   "kind": "build_request",
-  "title": "Create public poetry collection portal",
-  "projectName": "Poetry Portal",
+  "title": "Add optional login, notifications, and download features",
+  "projectName": "International Gojri Maa Boli Adab",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Create a backend data model to store poems with fields: title (text), content (text), author (text), dateCreated (timestamp), and a unique identifier",
-      "target": "backend",
+      "text": "Implement optional Internet Identity login system that allows users to browse all content without logging in, but enables notifications when logged in",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-1",
+          "msg-2",
+          "msg-3"
+        ],
+        "quotes": [
+          "Optional login with Internet Identity - log in karne walon ko in-app notifications milenge",
+          "bina login ke bhi sab browse kar sakte hain"
         ]
       },
       "acceptanceCriteria": [
-        "Poem data structure includes all specified fields",
-        "Each poem has a unique identifier for retrieval",
-        "Poems can be stored and retrieved from the backend"
+        "Users can view all poetry content without logging in",
+        "Login button is visible in header for unauthenticated users",
+        "Logged-in users see their authentication status in header",
+        "All existing browsing functionality (collections, search, poem viewing) works without authentication"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Implement backend methods to add new poems, retrieve all poems, and retrieve a single poem by ID",
-      "target": "backend",
+      "text": "Add in-app notification system that displays alerts to logged-in users when new poetry is added to the platform",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-1",
+          "msg-2",
+          "msg-3"
+        ],
+        "quotes": [
+          "jab nayi poetry add hogi toh logged-in users ko website par notification dikhega (free feature)",
+          "Jab nayi poetry add ho toh logged-in users ko notification dikhega"
         ]
       },
       "acceptanceCriteria": [
-        "Backend provides a method to add a new poem",
-        "Backend provides a method to list all poems",
-        "Backend provides a method to get a specific poem by ID"
+        "Backend tracks when new poems are added with timestamps",
+        "Backend provides endpoint to fetch notifications for logged-in users",
+        "Frontend displays notification badge or icon when new poetry is available",
+        "Notifications are only visible to authenticated users",
+        "Users can view and clear their notifications"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Create a home page displaying a grid or list of all poems with their titles and authors, allowing users to click through to read the full poem",
+      "text": "Add download button for image-type poems that enables direct image file download",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-2",
+          "msg-3"
+        ],
+        "quotes": [
+          "Image wali poetry: Direct image download",
+          "images direct download hongi"
         ]
       },
       "acceptanceCriteria": [
-        "Home page shows all poems in an organized layout",
-        "Each poem preview displays at least the title and author",
-        "Clicking on a poem navigates to its detail view"
+        "Download button appears on poem detail page for image-type poems",
+        "Clicking download button triggers browser download of the poem image",
+        "Downloaded file has appropriate filename based on poem title or ID",
+        "Download works for all existing image poems"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Create a poem detail page that displays the full poem content including title, author, content text, and date created",
+      "text": "Add download button for text-type poems that converts the text content into an image format (poster/card style) and downloads it",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-2",
+          "msg-3"
+        ],
+        "quotes": [
+          "Text wali poetry: Text ko image format mein convert karke download (beautiful card/poster ki tarah)",
+          "text poetry ko beautiful image format mein convert karke download"
         ]
       },
       "acceptanceCriteria": [
-        "Detail page shows complete poem information",
-        "Content is readable and properly formatted",
-        "Page includes navigation back to the home page"
+        "Download button appears on poem detail page for text-type poems",
+        "Text content is rendered into an attractive image format with appropriate styling",
+        "Generated image includes poem text, author name, and branding",
+        "Clicking download button triggers browser download of the generated image",
+        "Image format maintains readability and visual appeal"
       ]
     },
     {
       "id": "REQ-5",
-      "text": "Create an admin interface or form to add new poems to the collection with fields for title, content, and author",
+      "text": "Update website title and branding from 'International Gojri Maa Booli Adab' to 'International Gojri Maa Boli Adab' in both the browser tab title and header display",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-2"
+          "msg-5",
+          "msg-6"
+        ],
+        "quotes": [
+          "naam mai thoda change karo international gojri maa boli adab",
+          "Naam Update - 'International Gojri Maa Boli Adab' dono jagah (website title aur browser tab)"
         ]
       },
       "acceptanceCriteria": [
-        "Form includes input fields for title, content, and author",
-        "Form validates that required fields are filled",
-        "Successfully submitted poems appear in the collection"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Apply a creative, literary-inspired visual theme with elegant typography, warm earth tones or soft pastels, and a clean layout that emphasizes readability and creates a contemplative atmosphere suitable for poetry",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-2"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Design uses a cohesive color palette appropriate for literary content",
-        "Typography choices enhance readability and aesthetic appeal",
-        "Layout creates a calm, focused reading experience"
+        "Browser tab title displays 'International Gojri Maa Boli Adab'",
+        "Header component displays 'International Gojri Maa Boli Adab'",
+        "Spelling change from 'Booli' to 'Boli' is applied consistently across all branding locations"
       ]
     }
   ],
-  "constraints": [],
+  "constraints": [
+    "All existing features (poetry submission, collections management, search functionality) must remain intact and functional",
+    "Login system must use Internet Identity as the authentication provider",
+    "Notification system must be free (no paid third-party services)",
+    "Users must be able to browse all content without requiring login"
+  ],
   "nonGoals": [
-    "User authentication or private collections",
-    "Commenting or social features",
-    "Search or filtering functionality",
-    "Editing or deleting existing poems",
-    "Multi-language support"
+    "Email notifications for new poetry",
+    "Push notifications to mobile devices",
+    "User profiles or social features beyond basic authentication",
+    "Editing or deleting existing poems through the public interface",
+    "Real-time notifications using WebSockets"
   ],
   "imageRequirements": {
     "required": [],

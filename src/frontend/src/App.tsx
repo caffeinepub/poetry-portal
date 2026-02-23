@@ -3,7 +3,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Home from './pages/Home';
 import PoemDetail from './pages/PoemDetail';
 import AdminForm from './pages/AdminForm';
+import CollectionManager from './pages/CollectionManager';
 import Layout from './components/Layout';
+import UserProfileSetup from './components/UserProfileSetup';
 
 const queryClient = new QueryClient();
 
@@ -33,8 +35,15 @@ const adminRoute = createRoute({
   component: AdminForm,
 });
 
+// Collection manager route
+const collectionManagerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin/collections',
+  component: CollectionManager,
+});
+
 // Create the route tree
-const routeTree = rootRoute.addChildren([indexRoute, poemRoute, adminRoute]);
+const routeTree = rootRoute.addChildren([indexRoute, poemRoute, adminRoute, collectionManagerRoute]);
 
 // Create the router
 const router = createRouter({ routeTree });
@@ -50,6 +59,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
+      <UserProfileSetup />
     </QueryClientProvider>
   );
 }

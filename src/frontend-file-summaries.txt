@@ -1,12 +1,20 @@
 {
-  "frontend/src/App.tsx": "Main application component that sets up TanStack Router with three routes (home, poem detail, admin) wrapped in a Layout component with QueryClient provider.",
-  "frontend/src/components/Layout.tsx": "Layout wrapper component providing consistent header with navigation, main content area with Outlet for routed pages, and footer with branding and attribution.",
-  "frontend/src/pages/Home.tsx": "Home page displaying all poems in a responsive grid layout with loading states, empty state, and error handling.",
-  "frontend/src/pages/PoemDetail.tsx": "Poem detail page showing full poem content with title, author, date, and formatted text with navigation back to collection.",
-  "frontend/src/pages/AdminForm.tsx": "Admin form page with validated inputs for title, author, and content to submit new poems with success feedback and navigation.",
-  "frontend/src/components/PoemCard.tsx": "Reusable poem card component displaying poem preview with title, author, date, and truncated content with hover effects and click navigation.",
-  "frontend/src/hooks/useQueries.ts": "Custom React Query hooks for fetching all poems, fetching poem by ID, and submitting new poems with automatic cache invalidation.",
+  "frontend/src/App.tsx": "Main application component with TanStack Router setup including home, poem detail, admin form, and collection manager routes wrapped in Layout with QueryClient provider and UserProfileSetup component for first-time user profile creation.",
+  "frontend/src/components/Layout.tsx": "Layout wrapper with header displaying \"International Gojri Maa Boli Adab\" branding, navigation links (Home, Add Poem, Collections) visible based on authentication, LoginButton and NotificationBell components, main content area with Outlet, and footer with attribution.",
+  "frontend/src/pages/Home.tsx": "Home page with search bar, collection filtering, and responsive poem grid displaying both text and image poems with debounced search functionality and collection navigation",
+  "frontend/src/pages/PoemDetail.tsx": "Poem detail page that displays full content for both image poems (with full-resolution image and download button) and text poems (with formatted text and download-as-image button), includes collection badges that are clickable to filter by collection.",
+  "frontend/src/pages/AdminForm.tsx": "Admin form page with authentication check, poem type selector (text/image), conditional form fields based on type, image upload with preview and progress tracking using ExternalBlob from blob-storage component",
+  "frontend/src/components/PoemCard.tsx": "Reusable poem card component that renders differently for image poems (with image background and overlay) and text poems (with preview content), includes collection badges when provided",
+  "frontend/src/hooks/useQueries.ts": "Custom React Query hooks for all backend operations including poems, collections, search, user profiles, notifications, and collection-poem associations with proper cache invalidation.",
   "frontend/src/utils/formatDate.ts": "Utility function to convert backend Time (bigint nanoseconds) to human-readable date string format.",
   "frontend/src/index.css": "Global styles with warm earth tone color palette in OKLCH format, custom Google Fonts (Crimson Text, Lora, Inter), and typography settings for literary aesthetic.",
-  "frontend/tailwind.config.js": "Tailwind configuration extending theme with custom font families, warm color palette, enhanced shadows, and typography settings for elegant literary design."
+  "frontend/tailwind.config.js": "Tailwind configuration extending theme with custom font families, warm color palette, enhanced shadows, and typography settings for elegant literary design.",
+  "frontend/index.html": "HTML entry point with updated document title to \"International Gojri Maa Boli Adab\" (corrected spelling from \"Booli\" to \"Boli\").",
+  "frontend/src/pages/CollectionManager.tsx": "Admin-only collection management page with forms to create collections, list all collections, add/remove poems from collections, and delete collections with authentication check",
+  "frontend/src/components/LoginButton.tsx": "Login/logout button component using Internet Identity authentication with proper state management, loading indicators, and query cache clearing on logout.",
+  "frontend/src/components/UserProfileSetup.tsx": "Modal dialog component for first-time user profile setup that prompts authenticated users without a profile to enter their name, with proper loading state handling to prevent modal flash.",
+  "frontend/src/components/NotificationBell.tsx": "Notification bell icon component with unread count badge that opens a popover panel displaying notifications, only visible to authenticated users.",
+  "frontend/src/components/NotificationPanel.tsx": "Dropdown panel component displaying list of notifications with timestamps, read/unread status, and mark-as-read functionality using React Query hooks.",
+  "frontend/src/utils/downloadHelpers.ts": "Utility functions for downloading files including downloadImageFromURL for direct image downloads, downloadBlobAsImage for blob downloads, and sanitizeFilename for creating valid filenames.",
+  "frontend/src/utils/poemImageGenerator.ts": "Canvas-based utility function to generate attractive poster-style images from text poems with proper typography, warm earth tone colors, decorative borders, and branding."
 }
