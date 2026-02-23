@@ -1,93 +1,103 @@
 {
   "kind": "build_request",
-  "title": "Add footer, basic admin system, and notification system",
+  "title": "Implement admin-only access control for content management",
   "projectName": "Gojri Poetry Platform",
-  "priority": "normal",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add a permanent footer with the text 'Made by SC05 Sohail Ch' to all pages in the application",
-      "target": "frontend",
+      "text": "Implement backend admin authorization system that registers the owner's Principal ID as the sole admin and validates admin status for all create, update, and delete operations on poems and collections",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-20"
         ],
         "quotes": [
-          "Footer: 'Made by SC05 Sohail Ch' har page pe permanently"
+          "mai is app ka pwner hu mere siva kissi ko bhi is app par na toh koi cheez upload karna allow hai na hi koi cheez edit na hi koi collection edit"
         ]
       },
       "acceptanceCriteria": [
-        "Footer appears on all pages with the exact text 'Made by SC05 Sohail Ch'",
-        "Footer is styled consistently with the existing design",
-        "Footer remains visible at the bottom of the page"
+        "Owner's Principal ID is registered as admin in backend state",
+        "All poem create/update/delete operations verify caller is admin",
+        "All collection create/update/delete operations verify caller is admin",
+        "Non-admin users receive authorization error when attempting admin operations"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Implement a basic admin system that allows manually assigning admin role to specific users by their email or username",
-      "target": "backend",
+      "text": "Add frontend route guards to all /admin/* routes (including /admin/add-poem, /admin/collections, and admin panel) that check if the authenticated user is admin and redirect non-admin users to the home page with an informative message",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-20"
         ],
         "quotes": [
-          "Basic Admin System: Specific users ko manually admin banane ka system (email/username se)"
+          "dusre account se mai upload kar pa raha hu",
+          "Jab koi non-admin user admin route access karne ki koshish karega, use home page pe redirect kar diya jayega"
         ]
       },
       "acceptanceCriteria": [
-        "Backend provides a function to assign admin role to users by email or username",
-        "Admin status is persisted in user profiles",
-        "Only users with admin role can access admin functions like adding/editing poetry"
+        "Route guard checks admin status before allowing access to /admin/add-poem",
+        "Route guard checks admin status before allowing access to /admin/collections",
+        "Route guard checks admin status before allowing access to admin panel",
+        "Non-admin users are redirected to home page when attempting to access admin routes",
+        "User sees a toast notification explaining they lack admin permissions"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Add a frontend interface for manually assigning admin privileges to users by email or username",
+      "text": "Hide or disable admin navigation links (Add Poem, Collections, Admin Panel) in the header Layout component for non-admin users so only the owner sees these navigation options",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-20"
         ],
         "quotes": [
-          "Aap specific users ko admin bana sakte hain (manually email/username se)"
+          "Sirf aap hi poems upload, edit, delete kar sakte hain",
+          "Sirf aap hi collections create, edit, manage kar sakte hain"
         ]
       },
       "acceptanceCriteria": [
-        "Admin panel includes a form to assign admin role by entering email or username",
-        "Form provides feedback on successful admin assignment",
-        "Only existing admins can access this admin assignment interface"
+        "Add Poem link is hidden for non-admin users",
+        "Collections management link is hidden for non-admin users",
+        "Admin Panel link is hidden for non-admin users",
+        "Navigation links are visible and functional for admin user",
+        "Home link remains visible to all users"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Implement in-app notification system that notifies logged-in users when new poetry is added to the platform",
+      "text": "Ensure public users retain full access to view poems, download poems, like poems, and comment on poems without any restrictions",
       "target": "both",
       "source": {
         "messageIds": [
-          "msg-5"
+          "msg-20"
         ],
         "quotes": [
-          "Notification System: Nayi poetry add hone pe logged-in users ko in-app notifications"
+          "public sirf dekh sake download kar sake aur like comment kar sake bas yahi chahiye"
         ]
       },
       "acceptanceCriteria": [
-        "When a new poem is added, all logged-in users receive an in-app notification",
-        "Notifications appear in the existing NotificationBell component",
-        "Notification message clearly indicates that new poetry has been added",
-        "Users can mark notifications as read"
+        "Non-admin users can view all poems on home page",
+        "Non-admin users can view individual poem details",
+        "Non-admin users can download poems as images",
+        "Non-admin users can like poems",
+        "Non-admin users can comment on poems",
+        "Backend allows these read and interaction operations for all authenticated users"
       ]
     }
   ],
   "constraints": [
-    "Use the existing notification system infrastructure (NotificationBell, NotificationPanel components)",
-    "Maintain the existing access control and authorization patterns from backend/main.mo",
-    "Preserve the current Internet Identity authentication flow"
+    "Do not modify the single-actor architecture in backend/main.mo",
+    "Do not edit immutable frontend paths: useInternetIdentity hooks, useActor.ts, main.tsx, or components/ui",
+    "Admin authorization must use Principal ID comparison, not usernames or other identifiers",
+    "Preserve all existing poem viewing, downloading, liking, and commenting functionality for public users"
   ],
   "nonGoals": [
-    "Complex admin request/approval workflows",
-    "Email-based notifications (only in-app notifications)",
-    "Automated admin role assignment",
-    "Notification preferences or customization"
+    "Multi-admin support or role-based access control beyond single owner",
+    "Admin user interface for managing multiple administrators",
+    "Permission levels or granular access control",
+    "Public user registration or profile creation restrictions"
   ],
   "imageRequirements": {
     "required": [],

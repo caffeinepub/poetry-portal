@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { useSubmitPoem } from '../hooks/useQueries';
+import { useSubmitPoemWithCollections, useGetAllCollections } from '../hooks/useQueries';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, CheckCircle2, Upload, Image as ImageIcon, FileText } from 'lucide-react';
 import { PoemType, ExternalBlob } from '../backend';
 import { Progress } from '@/components/ui/progress';
@@ -25,8 +27,10 @@ export default function AdminForm() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [selectedCollections, setSelectedCollections] = useState<Set<bigint>>(new Set());
   
-  const { mutate: submitPoem, isPending } = useSubmitPoem();
+  const { mutate: submitPoem, isPending } = useSubmitPoemWithCollections();
+  const { data: collections } = useGetAllCollections();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -40,15 +44,25 @@ export default function AdminForm() {
     }
   };
 
+  const toggleCollection = (collectionId: bigint) => {
+    const newSet = new Set(selectedCollections);
+    if (newSet.has(collectionId)) {
+      newSet.delete(collectionId);
+    } else {
+      newSet.add(collectionId);
+    }
+    setSelectedCollections(newSet);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!title.trim()) return;
+    if (!title.trim() || !author.trim()) return;
 
-    if (poemType === 'text' && (!content.trim() || !author.trim())) return;
+    if (poemType === 'text' && !content.trim()) return;
     if (poemType === 'image' && !imageFile) return;
 
-    let imageBlob: ExternalBlob | null = null;
+    let imageBlob: ExternalBlob | undefined = undefined;
 
     if (poemType === 'image' && imageFile) {
       const arrayBuffer = await imageFile.arrayBuffer();
@@ -60,11 +74,14 @@ export default function AdminForm() {
 
     submitPoem(
       {
-        title: title.trim(),
-        content: poemType === 'image' ? content.trim() : content.trim(),
-        author: poemType === 'text' ? author.trim() : '',
-        poemType: poemType === 'text' ? PoemType.text : PoemType.image,
-        imageUrl: imageBlob,
+        submission: {
+          title: title.trim(),
+          content: content.trim(),
+          author: author.trim(),
+          poemType: poemType === 'text' ? PoemType.text : PoemType.image,
+          imageUrl: imageBlob,
+          collectionIds: Array.from(selectedCollections),
+        },
       },
       {
         onSuccess: () => {
@@ -75,6 +92,7 @@ export default function AdminForm() {
           setImageFile(null);
           setImagePreview(null);
           setUploadProgress(0);
+          setSelectedCollections(new Set());
           
           setTimeout(() => {
             setShowSuccess(false);
@@ -87,7 +105,8 @@ export default function AdminForm() {
 
   const isFormValid = 
     title.trim() && 
-    (poemType === 'text' ? (content.trim() && author.trim()) : imageFile);
+    author.trim() &&
+    (poemType === 'text' ? content.trim() : imageFile);
 
   if (!isAuthenticated) {
     return (
@@ -157,7 +176,7 @@ export default function AdminForm() {
               </RadioGroup>
             </div>
 
-            {/* Title Field */}
+            {/* Title Field - Common for both */}
             <div className="space-y-2">
               <Label htmlFor="title" className="text-base">
                 Title <span className="text-destructive">*</span>
@@ -173,40 +192,39 @@ export default function AdminForm() {
               />
             </div>
 
+            {/* Author Field - Common for both */}
+            <div className="space-y-2">
+              <Label htmlFor="author" className="text-base">
+                Author Name <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="author"
+                type="text"
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
+                placeholder="Enter author name"
+                required
+                disabled={isPending}
+              />
+            </div>
+
             {/* Conditional Fields Based on Poem Type */}
             {poemType === 'text' ? (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="content" className="text-base">
-                    Content <span className="text-destructive">*</span>
-                  </Label>
-                  <Textarea
-                    id="content"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    placeholder="Enter your poem here..."
-                    rows={10}
-                    required
-                    disabled={isPending}
-                    className="font-serif resize-none"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="author" className="text-base">
-                    Author <span className="text-destructive">*</span>
-                  </Label>
-                  <Input
-                    id="author"
-                    type="text"
-                    value={author}
-                    onChange={(e) => setAuthor(e.target.value)}
-                    placeholder="Enter author name"
-                    required
-                    disabled={isPending}
-                  />
-                </div>
-              </>
+              <div className="space-y-2">
+                <Label htmlFor="content" className="text-base">
+                  Content <span className="text-destructive">*</span>
+                </Label>
+                <Textarea
+                  id="content"
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="Enter your poem here..."
+                  rows={10}
+                  required
+                  disabled={isPending}
+                  className="font-serif resize-none"
+                />
+              </div>
             ) : (
               <>
                 <div className="space-y-2">
@@ -245,7 +263,7 @@ export default function AdminForm() {
 
                 <div className="space-y-2">
                   <Label htmlFor="description" className="text-base">
-                    Description (Optional)
+                    Description
                   </Label>
                   <Textarea
                     id="description"
@@ -257,6 +275,48 @@ export default function AdminForm() {
                   />
                 </div>
               </>
+            )}
+
+            {/* Collections Selection */}
+            {collections && collections.length > 0 && (
+              <div className="space-y-3">
+                <Label className="text-base">Add to Collections (Optional)</Label>
+                <ScrollArea className="h-[200px] rounded-lg border border-border p-4">
+                  <div className="space-y-3">
+                    {collections.map((collection) => (
+                      <div
+                        key={collection.id.toString()}
+                        className="flex items-start space-x-3 p-2 rounded-lg hover:bg-accent/50 transition-colors"
+                      >
+                        <Checkbox
+                          id={`collection-${collection.id}`}
+                          checked={selectedCollections.has(collection.id)}
+                          onCheckedChange={() => toggleCollection(collection.id)}
+                          disabled={isPending}
+                        />
+                        <div className="flex-1 space-y-1">
+                          <label
+                            htmlFor={`collection-${collection.id}`}
+                            className="text-sm font-medium leading-none cursor-pointer"
+                          >
+                            {collection.name}
+                          </label>
+                          {collection.description && (
+                            <p className="text-xs text-muted-foreground">
+                              {collection.description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+                {selectedCollections.size > 0 && (
+                  <p className="text-sm text-muted-foreground">
+                    Selected {selectedCollections.size} collection{selectedCollections.size !== 1 ? 's' : ''}
+                  </p>
+                )}
+              </div>
             )}
 
             {/* Upload Progress */}

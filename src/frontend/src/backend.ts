@@ -96,6 +96,14 @@ export interface CollectionView {
     name: string;
     description: string;
 }
+export interface PoemSubmission {
+    title: string;
+    content: string;
+    collectionIds: Array<bigint>;
+    poemType: PoemType;
+    author: string;
+    imageUrl?: ExternalBlob;
+}
 export type Time = bigint;
 export interface PoemSearchResult {
     poem: Poem;
@@ -165,9 +173,10 @@ export interface backendInterface {
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     searchPoems(searchTerm: string): Promise<Array<PoemSearchResult>>;
     submitPoem(title: string, content: string, author: string, poemType: PoemType, imageUrl: ExternalBlob | null): Promise<bigint>;
+    submitPoemWithCollections(submission: PoemSubmission): Promise<bigint>;
     updatePoem(poemId: bigint, newPoem: Poem): Promise<void>;
 }
-import type { ExternalBlob as _ExternalBlob, Poem as _Poem, PoemSearchResult as _PoemSearchResult, PoemType as _PoemType, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
+import type { ExternalBlob as _ExternalBlob, Poem as _Poem, PoemSearchResult as _PoemSearchResult, PoemSubmission as _PoemSubmission, PoemType as _PoemType, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _caffeineStorageBlobIsLive(arg0: Uint8Array): Promise<boolean> {
@@ -534,17 +543,31 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async updatePoem(arg0: bigint, arg1: Poem): Promise<void> {
+    async submitPoemWithCollections(arg0: PoemSubmission): Promise<bigint> {
         if (this.processError) {
             try {
-                const result = await this.actor.updatePoem(arg0, await to_candid_Poem_n27(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.submitPoemWithCollections(await to_candid_PoemSubmission_n27(this._uploadFile, this._downloadFile, arg0));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.updatePoem(arg0, await to_candid_Poem_n27(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.submitPoemWithCollections(await to_candid_PoemSubmission_n27(this._uploadFile, this._downloadFile, arg0));
+            return result;
+        }
+    }
+    async updatePoem(arg0: bigint, arg1: Poem): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updatePoem(arg0, await to_candid_Poem_n29(this._uploadFile, this._downloadFile, arg1));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updatePoem(arg0, await to_candid_Poem_n29(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
@@ -655,11 +678,14 @@ async function from_candid_vec_n20(_uploadFile: (file: ExternalBlob) => Promise<
 async function to_candid_ExternalBlob_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ExternalBlob): Promise<_ExternalBlob> {
     return await _uploadFile(value);
 }
+async function to_candid_PoemSubmission_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: PoemSubmission): Promise<_PoemSubmission> {
+    return await to_candid_record_n28(_uploadFile, _downloadFile, value);
+}
 function to_candid_PoemType_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: PoemType): _PoemType {
     return to_candid_variant_n24(_uploadFile, _downloadFile, value);
 }
-async function to_candid_Poem_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Poem): Promise<_Poem> {
-    return await to_candid_record_n28(_uploadFile, _downloadFile, value);
+async function to_candid_Poem_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Poem): Promise<_Poem> {
+    return await to_candid_record_n30(_uploadFile, _downloadFile, value);
 }
 function to_candid_UserRole_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
     return to_candid_variant_n9(_uploadFile, _downloadFile, value);
@@ -674,6 +700,39 @@ async function to_candid_opt_n25(_uploadFile: (file: ExternalBlob) => Promise<Ui
     return value === null ? candid_none() : candid_some(await to_candid_ExternalBlob_n26(_uploadFile, _downloadFile, value));
 }
 async function to_candid_record_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    title: string;
+    content: string;
+    collectionIds: Array<bigint>;
+    poemType: PoemType;
+    author: string;
+    imageUrl?: ExternalBlob;
+}): Promise<{
+    title: string;
+    content: string;
+    collectionIds: Array<bigint>;
+    poemType: _PoemType;
+    author: string;
+    imageUrl: [] | [_ExternalBlob];
+}> {
+    return {
+        title: value.title,
+        content: value.content,
+        collectionIds: value.collectionIds,
+        poemType: to_candid_PoemType_n23(_uploadFile, _downloadFile, value.poemType),
+        author: value.author,
+        imageUrl: value.imageUrl ? candid_some(await to_candid_ExternalBlob_n26(_uploadFile, _downloadFile, value.imageUrl)) : candid_none()
+    };
+}
+function to_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    proposed_top_up_amount?: bigint;
+}): {
+    proposed_top_up_amount: [] | [bigint];
+} {
+    return {
+        proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
+    };
+}
+async function to_candid_record_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     id: bigint;
     title: string;
     content: string;
@@ -698,15 +757,6 @@ async function to_candid_record_n28(_uploadFile: (file: ExternalBlob) => Promise
         poemType: to_candid_PoemType_n23(_uploadFile, _downloadFile, value.poemType),
         author: value.author,
         imageUrl: value.imageUrl ? candid_some(await to_candid_ExternalBlob_n26(_uploadFile, _downloadFile, value.imageUrl)) : candid_none()
-    };
-}
-function to_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    proposed_top_up_amount?: bigint;
-}): {
-    proposed_top_up_amount: [] | [bigint];
-} {
-    return {
-        proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
     };
 }
 function to_candid_variant_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: PoemType): {

@@ -53,6 +53,14 @@ export const PoemSearchResult = IDL.Record({
   'poem' : Poem,
   'collectionNames' : IDL.Vec(IDL.Text),
 });
+export const PoemSubmission = IDL.Record({
+  'title' : IDL.Text,
+  'content' : IDL.Text,
+  'collectionIds' : IDL.Vec(IDL.Nat),
+  'poemType' : PoemType,
+  'author' : IDL.Text,
+  'imageUrl' : IDL.Opt(ExternalBlob),
+});
 
 export const idlService = IDL.Service({
   '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -109,7 +117,8 @@ export const idlService = IDL.Service({
       [IDL.Nat],
       [],
     ),
-  'updatePoem' : IDL.Func([IDL.Nat, Poem], [], ['oneway']),
+  'submitPoemWithCollections' : IDL.Func([PoemSubmission], [IDL.Nat], []),
+  'updatePoem' : IDL.Func([IDL.Nat, Poem], [], []),
 });
 
 export const idlInitArgs = [];
@@ -159,6 +168,14 @@ export const idlFactory = ({ IDL }) => {
   const PoemSearchResult = IDL.Record({
     'poem' : Poem,
     'collectionNames' : IDL.Vec(IDL.Text),
+  });
+  const PoemSubmission = IDL.Record({
+    'title' : IDL.Text,
+    'content' : IDL.Text,
+    'collectionIds' : IDL.Vec(IDL.Nat),
+    'poemType' : PoemType,
+    'author' : IDL.Text,
+    'imageUrl' : IDL.Opt(ExternalBlob),
   });
   
   return IDL.Service({
@@ -220,7 +237,8 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Nat],
         [],
       ),
-    'updatePoem' : IDL.Func([IDL.Nat, Poem], [], ['oneway']),
+    'submitPoemWithCollections' : IDL.Func([PoemSubmission], [IDL.Nat], []),
+    'updatePoem' : IDL.Func([IDL.Nat, Poem], [], []),
   });
 };
 

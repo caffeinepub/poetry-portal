@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import type { Poem, CollectionView, PoemSearchResult, ExternalBlob, UserProfile, Notification } from '../backend';
+import type { Poem, CollectionView, PoemSearchResult, ExternalBlob, UserProfile, Notification, PoemSubmission } from '../backend';
 import { PoemType, UserRole } from '../backend';
 import type { Principal } from '@dfinity/principal';
 
@@ -60,6 +60,29 @@ export function useSubmitPoem() {
   });
 }
 
+export function useSubmitPoemWithCollections() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      submission,
+    }: {
+      submission: PoemSubmission;
+    }) => {
+      if (!actor) throw new Error('Actor not initialized');
+      return actor.submitPoemWithCollections(submission);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['poems'] });
+      queryClient.invalidateQueries({ queryKey: ['collections'] });
+      queryClient.invalidateQueries({ queryKey: ['collection-poems'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['unreadNotificationsCount'] });
+    },
+  });
+}
+
 export function useGetAllCollections() {
   const { actor, isFetching } = useActor();
 
@@ -113,6 +136,7 @@ export function useAddPoemToCollection() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['collections'] });
       queryClient.invalidateQueries({ queryKey: ['collection-poems'] });
+      queryClient.invalidateQueries({ queryKey: ['poem-collections'] });
     },
   });
 }
@@ -129,6 +153,7 @@ export function useRemovePoemFromCollection() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['collections'] });
       queryClient.invalidateQueries({ queryKey: ['collection-poems'] });
+      queryClient.invalidateQueries({ queryKey: ['poem-collections'] });
     },
   });
 }

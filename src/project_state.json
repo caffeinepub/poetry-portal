@@ -1,35 +1,32 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Poetry web app with footer, basic admin system, and notification system",
+  "summary": "A poetry sharing platform where only the owner can upload, edit, and manage content (poems and collections), while public users can view, download, like, and comment on poems",
   "architectural_notes": [
-    "Using existing notification system for new poetry alerts",
-    "Admin assignment is manual (by email/username) to keep it simple and reliable"
+    "Admin access control: Only owner can upload/edit/delete poems and manage collections",
+    "Public users have read-only access: view, download, like, and comment",
+    "Frontend route guards redirect non-admin users from /admin/* routes",
+    "Backend validates admin principal ID for all create/update/delete operations"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "Non-admin users can currently access /admin/add-poem and upload content",
+    "Admin routes lack authentication protection"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-add-a-permanent-footer-with-the-text-made-by-sc05-sohail-ch-to-all-pages-in-the-application",
-      "title": "Add a permanent footer with the text 'Made by SC05 Sohail Ch' to all pages in the application",
+      "id": "feature-add-frontend-route-guards-to-all-admin-routes-including-admin-add-poem-admin-collections-and-admin-panel-that-check-if-the-authenticated-user-is-admin-and-redirect-non-admin-users-to-the-home-page-with-an-informative-message",
+      "title": "Add frontend route guards to all /admin/* routes (including /admin/add-poem, /admin/collections, and admin panel) that check if the authenticated user is admin and redirect non-admin users to the home page with an informative message",
       "reqIds": [
-        "REQ-1"
+        "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-a-frontend-interface-for-manually-assigning-admin-privileges-to-users-by-email-or-username",
-      "title": "Add a frontend interface for manually assigning admin privileges to users by email or username",
+      "id": "feature-hide-or-disable-admin-navigation-links-add-poem-collections-admin-panel-in-the-header-layout-component-for-non-admin-users-so-only-the-owner-sees-these-navigation-options",
+      "title": "Hide or disable admin navigation links (Add Poem, Collections, Admin Panel) in the header Layout component for non-admin users so only the owner sees these navigation options",
       "reqIds": [
         "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-in-app-notification-system-that-notifies-logged-in-users-when-new-poetry-is-added-to-the-platform",
-      "title": "Implement in-app notification system that notifies logged-in users when new poetry is added to the platform",
-      "reqIds": [
-        "REQ-4"
       ],
       "version": 1
     }
@@ -37,27 +34,41 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Add footer 'Made by SC05 Sohail Ch' to all pages",
+      "summary": "Implement admin-only access control for upload, edit, delete, and collection management",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Basic admin system - manually assign admin role to specific users by email/username",
+      "summary": "Protect all /admin/* routes with authentication checks",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "In-app notification system for logged-in users when new poetry is added",
+      "summary": "Register owner's principal ID as admin in backend",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Redirect non-admin users attempting to access admin routes to home page",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-5",
-      "summary": "Implement a basic admin system that allows manually assigning admin role to specific users by their email or username",
+      "summary": "Implement backend admin authorization system that registers the owner's Principal ID as the sole admin and validates admin status for all create, update, and delete operations on poems and collections",
       "reqIds": [
-        "REQ-2"
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Ensure public users retain full access to view poems, download poems, like poems, and comment on poems without any restrictions",
+      "reqIds": [
+        "REQ-4"
       ],
       "status": "pending"
     }

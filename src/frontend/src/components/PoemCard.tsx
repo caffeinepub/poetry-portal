@@ -1,10 +1,18 @@
+import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { formatDate } from '../utils/formatDate';
-import { Calendar, User, Image as ImageIcon } from 'lucide-react';
+import { Calendar, User, Image as ImageIcon, FolderPlus, Loader2 } from 'lucide-react';
 import type { Poem } from '../backend';
 import { PoemType } from '../backend';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useGetAllCollections, useAddPoemToCollection } from '../hooks/useQueries';
+import { toast } from 'sonner';
 
 interface PoemCardProps {
   poem: Poem;
@@ -13,9 +21,57 @@ interface PoemCardProps {
 
 export default function PoemCard({ poem, collectionNames }: PoemCardProps) {
   const navigate = useNavigate();
+  const { identity } = useInternetIdentity();
+  const isAuthenticated = !!identity;
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedCollections, setSelectedCollections] = useState<Set<bigint>>(new Set());
 
-  const handleClick = () => {
+  const { data: allCollections } = useGetAllCollections();
+  const { mutate: addPoemToCollection, isPending } = useAddPoemToCollection();
+
+  const handleClick = (e: React.MouseEvent) => {
+    // Don't navigate if clicking on the add to collection button
+    if ((e.target as HTMLElement).closest('[data-add-to-collection]')) {
+      return;
+    }
     navigate({ to: '/poem/$id', params: { id: poem.id.toString() } });
+  };
+
+  const handleAddToCollections = () => {
+    if (selectedCollections.size === 0) return;
+
+    const promises = Array.from(selectedCollections).map((collectionId) =>
+      new Promise<void>((resolve, reject) => {
+        addPoemToCollection(
+          { collectionId, poemId: poem.id },
+          {
+            onSuccess: () => resolve(),
+            onError: (error) => reject(error),
+          }
+        );
+      })
+    );
+
+    Promise.all(promises)
+      .then(() => {
+        toast.success(`Poem added to ${selectedCollections.size} collection${selectedCollections.size > 1 ? 's' : ''}`);
+        setSelectedCollections(new Set());
+        setIsDialogOpen(false);
+      })
+      .catch((error) => {
+        toast.error('Failed to add poem to collections');
+        console.error(error);
+      });
+  };
+
+  const toggleCollection = (collectionId: bigint) => {
+    const newSet = new Set(selectedCollections);
+    if (newSet.has(collectionId)) {
+      newSet.delete(collectionId);
+    } else {
+      newSet.add(collectionId);
+    }
+    setSelectedCollections(newSet);
   };
 
   const isImagePoem = poem.poemType === PoemType.image;
@@ -47,6 +103,83 @@ export default function PoemCard({ poem, collectionNames }: PoemCardProps) {
             <ImageIcon className="h-3 w-3" />
             Image
           </Badge>
+          {isAuthenticated && allCollections && allCollections.length > 0 && (
+            <div className="absolute top-3 left-3" data-add-to-collection>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="gap-1 shadow-lg"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <FolderPlus className="h-3 w-3" />
+                    Add
+                  </Button>
+                </DialogTrigger>
+                <DialogContent onClick={(e) => e.stopPropagation()}>
+                  <DialogHeader>
+                    <DialogTitle>Add to Collections</DialogTitle>
+                    <DialogDescription>
+                      Select collections to add "{poem.title}" to
+                    </DialogDescription>
+                  </DialogHeader>
+                  <ScrollArea className="max-h-[400px] pr-4">
+                    <div className="space-y-3">
+                      {allCollections.map((collection) => (
+                        <div
+                          key={collection.id.toString()}
+                          className="flex items-start space-x-3 p-3 rounded-lg border border-border hover:bg-accent/50 transition-colors"
+                        >
+                          <Checkbox
+                            id={`collection-${collection.id}`}
+                            checked={selectedCollections.has(collection.id)}
+                            onCheckedChange={() => toggleCollection(collection.id)}
+                          />
+                          <div className="flex-1 space-y-1">
+                            <label
+                              htmlFor={`collection-${collection.id}`}
+                              className="text-sm font-medium leading-none cursor-pointer"
+                            >
+                              {collection.name}
+                            </label>
+                            {collection.description && (
+                              <p className="text-xs text-muted-foreground">
+                                {collection.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                  <div className="flex gap-2 pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsDialogOpen(false)}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleAddToCollections}
+                      disabled={selectedCollections.size === 0 || isPending}
+                      className="flex-1"
+                    >
+                      {isPending ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Adding...
+                        </>
+                      ) : (
+                        `Add to ${selectedCollections.size} collection${selectedCollections.size !== 1 ? 's' : ''}`
+                      )}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          )}
         </div>
         {collectionNames && collectionNames.length > 0 && (
           <CardContent className="pt-3 pb-3">
@@ -73,9 +206,87 @@ export default function PoemCard({ poem, collectionNames }: PoemCardProps) {
       className="cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:border-primary/50 border-border/40 bg-card/80 backdrop-blur-sm group"
     >
       <CardHeader className="space-y-3">
-        <CardTitle className="text-2xl font-serif leading-tight group-hover:text-primary transition-colors">
-          {poem.title}
-        </CardTitle>
+        <div className="flex items-start justify-between gap-2">
+          <CardTitle className="text-2xl font-serif leading-tight group-hover:text-primary transition-colors flex-1">
+            {poem.title}
+          </CardTitle>
+          {isAuthenticated && allCollections && allCollections.length > 0 && (
+            <div data-add-to-collection>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="gap-1 -mt-1"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <FolderPlus className="h-4 w-4" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent onClick={(e) => e.stopPropagation()}>
+                  <DialogHeader>
+                    <DialogTitle>Add to Collections</DialogTitle>
+                    <DialogDescription>
+                      Select collections to add "{poem.title}" to
+                    </DialogDescription>
+                  </DialogHeader>
+                  <ScrollArea className="max-h-[400px] pr-4">
+                    <div className="space-y-3">
+                      {allCollections.map((collection) => (
+                        <div
+                          key={collection.id.toString()}
+                          className="flex items-start space-x-3 p-3 rounded-lg border border-border hover:bg-accent/50 transition-colors"
+                        >
+                          <Checkbox
+                            id={`collection-${collection.id}`}
+                            checked={selectedCollections.has(collection.id)}
+                            onCheckedChange={() => toggleCollection(collection.id)}
+                          />
+                          <div className="flex-1 space-y-1">
+                            <label
+                              htmlFor={`collection-${collection.id}`}
+                              className="text-sm font-medium leading-none cursor-pointer"
+                            >
+                              {collection.name}
+                            </label>
+                            {collection.description && (
+                              <p className="text-xs text-muted-foreground">
+                                {collection.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                  <div className="flex gap-2 pt-4">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsDialogOpen(false)}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={handleAddToCollections}
+                      disabled={selectedCollections.size === 0 || isPending}
+                      className="flex-1"
+                    >
+                      {isPending ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Adding...
+                        </>
+                      ) : (
+                        `Add to ${selectedCollections.size} collection${selectedCollections.size !== 1 ? 's' : ''}`
+                      )}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          )}
+        </div>
         
         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
           <div className="flex items-center gap-1.5">

@@ -11,7 +11,7 @@ export default function Layout() {
   const currentYear = new Date().getFullYear();
   const { identity } = useInternetIdentity();
   const isAuthenticated = !!identity;
-  const { data: isAdmin } = useIsCallerAdmin();
+  const { data: isAdmin, isLoading: isCheckingAdmin } = useIsCallerAdmin();
   
   // Generate app identifier for UTM tracking
   const appIdentifier = encodeURIComponent(
@@ -37,12 +37,12 @@ export default function Layout() {
             >
               Home
             </Button>
-            {isAuthenticated && (
+            {isAuthenticated && isAdmin && !isCheckingAdmin && (
               <>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => navigate({ to: '/admin' })}
+                  onClick={() => navigate({ to: '/admin/add-poem' })}
                   className="gap-2 text-muted-foreground hover:text-foreground"
                 >
                   <PenTool className="h-4 w-4" />
@@ -57,20 +57,18 @@ export default function Layout() {
                   <FolderOpen className="h-4 w-4" />
                   <span className="hidden sm:inline">Collections</span>
                 </Button>
-                {isAdmin && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => navigate({ to: '/admin/users' })}
-                    className="gap-2 text-muted-foreground hover:text-foreground"
-                  >
-                    <Shield className="h-4 w-4" />
-                    <span className="hidden sm:inline">Admin Panel</span>
-                  </Button>
-                )}
-                <NotificationBell />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate({ to: '/admin/panel' })}
+                  className="gap-2 text-muted-foreground hover:text-foreground"
+                >
+                  <Shield className="h-4 w-4" />
+                  <span className="hidden sm:inline">Admin Panel</span>
+                </Button>
               </>
             )}
+            {isAuthenticated && <NotificationBell />}
             <LoginButton />
           </nav>
         </div>

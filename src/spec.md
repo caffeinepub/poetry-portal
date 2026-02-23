@@ -1,12 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Add footer branding, implement basic admin system with manual role assignment, and introduce in-app notifications for new poetry.
+**Goal:** Restrict content management (creating, editing, and deleting poems and collections) to the owner only, while allowing all authenticated users to view, download, like, and comment on poems.
 
 **Planned changes:**
-- Add a permanent footer displaying "Made by SC05 Sohail Ch" on all pages
-- Implement backend functionality to manually assign admin role to users by email or username
-- Create admin panel interface for assigning admin privileges to specific users
-- Implement in-app notification system that alerts logged-in users when new poetry is added
+- Implement backend admin authorization that registers the owner's Principal ID as the sole admin and validates admin status for all create, update, and delete operations on poems and collections
+- Add frontend route guards to all /admin/* routes that check if the authenticated user is admin and redirect non-admin users to the home page with an informative toast message
+- Hide admin navigation links (Add Poem, Collections, Admin Panel) in the header for non-admin users
+- Ensure public users retain full access to view, download, like, and comment on poems
 
-**User-visible outcome:** Users will see consistent branding in the footer across all pages. Admins can manually grant admin privileges to other users through an admin panel. All logged-in users will receive in-app notifications when new poetry is published on the platform.
+**User-visible outcome:** Only the owner will see and access admin features (Add Poem, Collections, Admin Panel) in the navigation and be able to create, edit, or delete content. Other authenticated users will only be able to view, download, like, and comment on poems. Non-admin users attempting to access admin routes will be redirected to the home page with a notification explaining they lack admin permissions.

@@ -1,81 +1,99 @@
-import { RouterProvider, createRouter, createRoute, createRootRoute } from '@tanstack/react-router';
+import { StrictMode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { RouterProvider, createRouter, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
+import Layout from './components/Layout';
 import Home from './pages/Home';
 import PoemDetail from './pages/PoemDetail';
 import AdminForm from './pages/AdminForm';
 import CollectionManager from './pages/CollectionManager';
 import AdminPanel from './pages/AdminPanel';
-import Layout from './components/Layout';
 import UserProfileSetup from './components/UserProfileSetup';
+import AdminRouteGuard from './components/AdminRouteGuard';
+import { Toaster } from '@/components/ui/sonner';
+import { ThemeProvider } from 'next-themes';
 
-const queryClient = new QueryClient();
-
-// Root route with Layout wrapper
-const rootRoute = createRootRoute({
-  component: Layout,
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
+    },
+  },
 });
 
-// Home route
+const rootRoute = createRootRoute({
+  component: () => (
+    <>
+      <Layout />
+      <UserProfileSetup />
+    </>
+  ),
+});
+
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   component: Home,
 });
 
-// Poem detail route
-const poemRoute = createRoute({
+const poemDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/poem/$id',
   component: PoemDetail,
 });
 
-// Admin form route
-const adminRoute = createRoute({
+// Admin route guard wrapper
+const adminGuardRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/admin',
+  component: AdminRouteGuard,
+});
+
+const adminFormRoute = createRoute({
+  getParentRoute: () => adminGuardRoute,
+  path: '/add-poem',
   component: AdminForm,
 });
 
-// Collection manager route
 const collectionManagerRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/admin/collections',
+  getParentRoute: () => adminGuardRoute,
+  path: '/collections',
   component: CollectionManager,
 });
 
-// Admin panel route for user management
 const adminPanelRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/admin/users',
+  getParentRoute: () => adminGuardRoute,
+  path: '/panel',
   component: AdminPanel,
 });
 
-// Create the route tree
 const routeTree = rootRoute.addChildren([
   indexRoute,
-  poemRoute,
-  adminRoute,
-  collectionManagerRoute,
-  adminPanelRoute,
+  poemDetailRoute,
+  adminGuardRoute.addChildren([
+    adminFormRoute,
+    collectionManagerRoute,
+    adminPanelRoute,
+  ]),
 ]);
 
-// Create the router
 const router = createRouter({ routeTree });
 
-// Register the router for type safety
 declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
   }
 }
 
-function App() {
+export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <UserProfileSetup />
-    </QueryClientProvider>
+    <StrictMode>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+          <Toaster />
+        </QueryClientProvider>
+      </ThemeProvider>
+    </StrictMode>
   );
 }
-
-export default App;

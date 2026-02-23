@@ -1,79 +1,80 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add footer, basic admin system, and notification system",
+  "title": "Frontend Admin Access Control Implementation",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Add permanent footer with 'Made by SC05 Sohail Ch' to all pages",
+      "id": "REQ-2",
+      "summary": "Add frontend route guards to all /admin/* routes that check admin status and redirect non-admin users to home page with informative message",
       "acceptanceCriteria": [
-        "Footer appears on all pages with the exact text 'Made by SC05 Sohail Ch'",
-        "Footer is styled consistently with the existing design",
-        "Footer remains visible at the bottom of the page"
+        "Route guard checks admin status before allowing access to /admin/add-poem",
+        "Route guard checks admin status before allowing access to /admin/collections",
+        "Route guard checks admin status before allowing access to admin panel",
+        "Non-admin users are redirected to home page when attempting to access admin routes",
+        "User sees a toast notification explaining they lack admin permissions"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/Layout.tsx",
+          "path": "frontend/src/components/AdminRouteGuard.tsx",
+          "operation": "create",
+          "description": "Create a route guard component that wraps admin routes, checks if the authenticated user is an admin using the isCallerAdmin backend method, and redirects non-admin users to the home page with a toast notification explaining insufficient permissions. Use useInternetIdentity to verify authentication, useIsCallerAdmin query hook to check admin status, and useNavigate for redirection. Display a loading state while checking admin status. Verify the authorization component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Update the existing footer section to include the permanent text 'Made by SC05 Sohail Ch' alongside the existing caffeine.ai attribution. Style it consistently with the current footer design using the warm earth-tone color scheme from the global CSS."
+          "description": "Add a new React Query hook useIsCallerAdmin that calls actor.isCallerAdmin() to check if the current authenticated user has admin privileges. The hook should be enabled only when the actor is available and should return boolean admin status. Include proper error handling and retry configuration."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wrap all admin routes (/admin/add-poem, /admin/collections, /admin/panel) with the AdminRouteGuard component to enforce admin-only access. Keep the route structure but nest each admin route's component inside AdminRouteGuard. Ensure non-admin routes remain accessible to all users."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Add frontend interface for manually assigning admin privileges to users",
+      "summary": "Hide admin navigation links (Add Poem, Collections, Admin Panel) in the header for non-admin users so only the owner sees these navigation options",
       "acceptanceCriteria": [
-        "Admin panel includes a form to assign admin role by entering email or username",
-        "Form provides feedback on successful admin assignment",
-        "Only existing admins can access this admin assignment interface"
+        "Add Poem link is hidden for non-admin users",
+        "Collections management link is hidden for non-admin users",
+        "Admin Panel link is hidden for non-admin users",
+        "Navigation links are visible and functional for admin user",
+        "Home link remains visible to all users"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/AdminPanel.tsx",
-          "operation": "create",
-          "description": "Create a new admin panel page that allows admins to assign admin privileges to other users. Include a form with input for entering a Principal ID (since the backend uses Principal for user identification). Use the authorization component to ensure only admins can access this page. Display success/error feedback using toast notifications or inline messages. Call the backend's assignCallerUserRole method to grant admin role. Style using the existing design system with shadcn/ui components."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add a new mutation hook useAssignUserRole that wraps the backend's assignCallerUserRole method. Include proper error handling and success feedback. Invalidate relevant queries (user role queries) upon successful role assignment."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Register a new route for the AdminPanel page at '/admin/users' path. Ensure the route is only accessible when the user is authenticated and has admin privileges."
-        },
-        {
           "path": "frontend/src/components/Layout.tsx",
           "operation": "modify",
-          "description": "Add a navigation link to 'Admin Panel' in the header navigation that is conditionally rendered only for users with admin role. Use the useIsCallerAdmin hook to check admin status before displaying the link."
+          "description": "Conditionally render admin navigation links (Add Poem, Collections, Admin Panel) based on admin status. Use the useIsCallerAdmin hook to check if the current user is an admin. Only display these links when the user is authenticated and isAdmin returns true. Keep the Home link and LoginButton visible to all users. Show the notification bell only for authenticated users. Verify the authorization component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Implement in-app notification system for new poetry additions",
+      "summary": "Ensure public users retain full access to view poems, download poems, like poems, and comment on poems without any restrictions",
       "acceptanceCriteria": [
-        "When a new poem is added, all logged-in users receive an in-app notification",
-        "Notifications appear in the existing NotificationBell component",
-        "Notification message clearly indicates that new poetry has been added",
-        "Users can mark notifications as read"
+        "Non-admin users can view all poems on home page",
+        "Non-admin users can view individual poem details",
+        "Non-admin users can download poems as images",
+        "Non-admin users can like poems",
+        "Non-admin users can comment on poems",
+        "Backend allows these read and interaction operations for all authenticated users"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/pages/Home.tsx",
           "operation": "modify",
-          "description": "Ensure the existing notification hooks (useGetNotifications, useMarkNotificationAsRead, useGetUnreadNotificationsCount) properly handle new poetry notifications. The backend already provides these methods, so verify the hooks are correctly configured with appropriate refetch intervals to poll for new notifications periodically (e.g., every 30 seconds for authenticated users)."
+          "description": "Verify that the Home page displays poems for all users regardless of admin status. Ensure search functionality and collection filtering remain accessible to all authenticated users. No admin checks should block viewing poem cards or navigating to poem details."
         },
         {
-          "path": "frontend/src/components/NotificationPanel.tsx",
+          "path": "frontend/src/pages/PoemDetail.tsx",
           "operation": "modify",
-          "description": "Verify that the NotificationPanel component properly displays poetry-related notifications with clear messages indicating new poetry has been added. Ensure the mark-as-read functionality works correctly with the existing backend integration. Add any additional styling or message formatting needed to make poetry notifications visually distinct if required."
+          "description": "Verify that the PoemDetail page allows all authenticated users to view poem content, download images (both original and generated), and add poems to their collections. Ensure download functionality and collection assignment remain accessible to non-admin users. No admin checks should restrict these read and interaction operations."
         },
         {
-          "path": "frontend/src/pages/AdminForm.tsx",
+          "path": "frontend/src/components/PoemCard.tsx",
           "operation": "modify",
-          "description": "After successfully submitting a new poem via the submitPoem backend method, trigger a notification fetch or show a confirmation that logged-in users will be notified. This ensures the notification system activates when new poetry is added through the admin form."
+          "description": "Verify that the PoemCard component allows all authenticated users to view poem information and add poems to collections via the dialog. Ensure the add-to-collection functionality remains accessible to non-admin users without admin checks."
         }
       ]
     }

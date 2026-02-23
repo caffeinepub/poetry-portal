@@ -2,8 +2,29 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-permanent-footer-with-the-text-made-by-sc05-sohail-ch-to-all-pages-in-the-application",
-      "featureTitle": "Add a permanent footer with the text 'Made by SC05 Sohail Ch' to all pages in the application",
+      "featureId": "feature-add-frontend-route-guards-to-all-admin-routes-including-admin-add-poem-admin-collections-and-admin-panel-that-check-if-the-authenticated-user-is-admin-and-redirect-non-admin-users-to-the-home-page-with-an-informative-message",
+      "featureTitle": "Add frontend route guards to all /admin/* routes (including /admin/add-poem, /admin/collections, and admin panel) that check if the authenticated user is admin and redirect non-admin users to the home page with an informative message",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AdminRouteGuard.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-hide-or-disable-admin-navigation-links-add-poem-collections-admin-panel-in-the-header-layout-component-for-non-admin-users-so-only-the-owner-sees-these-navigation-options",
+      "featureTitle": "Hide or disable admin navigation links (Add Poem, Collections, Admin Panel) in the header Layout component for non-admin users so only the owner sees these navigation options",
       "files": [
         "frontend/src/components/Layout.tsx"
       ],
@@ -17,52 +38,7 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-1"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-a-frontend-interface-for-manually-assigning-admin-privileges-to-users-by-email-or-username",
-      "featureTitle": "Add a frontend interface for manually assigning admin privileges to users by email or username",
-      "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/Layout.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/AdminPanel.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
         "REQ-3"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-in-app-notification-system-that-notifies-logged-in-users-when-new-poetry-is-added-to-the-platform",
-      "featureTitle": "Implement in-app notification system that notifies logged-in users when new poetry is added to the platform",
-      "files": [
-        "frontend/src/components/NotificationPanel.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/AdminForm.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
       ],
       "confidence": "high"
     }

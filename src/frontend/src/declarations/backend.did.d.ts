@@ -36,6 +36,14 @@ export interface PoemSearchResult {
   'poem' : Poem,
   'collectionNames' : Array<string>,
 }
+export interface PoemSubmission {
+  'title' : string,
+  'content' : string,
+  'collectionIds' : Array<bigint>,
+  'poemType' : PoemType,
+  'author' : string,
+  'imageUrl' : [] | [ExternalBlob],
+}
 export type PoemType = { 'text' : null } |
   { 'image' : null };
 export type Time = bigint;
@@ -93,6 +101,7 @@ export interface _SERVICE {
     [string, string, string, PoemType, [] | [ExternalBlob]],
     bigint
   >,
+  'submitPoemWithCollections' : ActorMethod<[PoemSubmission], bigint>,
   'updatePoem' : ActorMethod<[bigint, Poem], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;

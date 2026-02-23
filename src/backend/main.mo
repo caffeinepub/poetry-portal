@@ -4,8 +4,8 @@ import Time "mo:core/Time";
 import Nat "mo:core/Nat";
 import Text "mo:core/Text";
 import Array "mo:core/Array";
-import Iter "mo:core/Iter";
 import Order "mo:core/Order";
+import Iter "mo:core/Iter";
 import Runtime "mo:core/Runtime";
 import Principal "mo:core/Principal";
 import Storage "blob-storage/Storage";
@@ -56,6 +56,15 @@ actor {
     read : Bool;
   };
 
+  public type PoemSubmission = {
+    title : Text;
+    content : Text;
+    author : Text;
+    poemType : PoemType;
+    imageUrl : ?Storage.ExternalBlob;
+    collectionIds : [Nat];
+  };
+
   let poems = Map.empty<Nat, Poem>();
   let collections = Map.empty<Nat, Collection>();
   let userProfiles = Map.empty<Principal, UserProfile>();
@@ -91,8 +100,8 @@ actor {
     poemType : PoemType,
     imageUrl : ?Storage.ExternalBlob,
   ) : async Nat {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can submit poems");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can create poems");
     };
     let newPoem : Poem = {
       id = poemIdCounter;
@@ -218,8 +227,8 @@ actor {
     collectionId : Nat,
     poemId : Nat,
   ) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can remove poems from collections");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can remove poems from collections");
     };
     switch (collections.get(collectionId)) {
       case (null) { Runtime.trap("Collection not found") };
@@ -241,8 +250,8 @@ actor {
   };
 
   public shared ({ caller }) func deleteCollection(collectionId : Nat) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can delete collections");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can delete collections");
     };
     switch (collections.containsKey(collectionId)) {
       case (true) {
@@ -285,8 +294,8 @@ actor {
   };
 
   public shared ({ caller }) func createCollection(name : Text, description : Text) : async Nat {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can create collections");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can create collections");
     };
     let newCollection : Collection = {
       id = collectionIdCounter;
@@ -301,8 +310,8 @@ actor {
   };
 
   public shared ({ caller }) func addPoemToCollection(collectionId : Nat, poemId : Nat) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can add poems to collections");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can add poems to collections");
     };
     if (not poems.containsKey(poemId)) {
       Runtime.trap("Poem does not exist");
@@ -323,8 +332,60 @@ actor {
     };
   };
 
+  public shared ({ caller }) func submitPoemWithCollections(
+    submission : PoemSubmission
+  ) : async Nat {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can create poems");
+    };
+    let newPoem : Poem = {
+      id = poemIdCounter;
+      title = submission.title;
+      content = submission.content;
+      author = submission.author;
+      dateCreated = Time.now();
+      poemType = submission.poemType;
+      imageUrl = submission.imageUrl;
+    };
+    poems.add(poemIdCounter, newPoem);
+    let notification : Notification = {
+      message = "New poem added: " # submission.title;
+      timestamp = Time.now();
+      read = false;
+    };
+    for ((user, _) in userProfiles.entries()) {
+      let userNotifications = switch (notifications.get(user)) {
+        case (null) { List.empty<Notification>() };
+        case (?existing) { existing };
+      };
+      userNotifications.add(notification);
+      notifications.add(user, userNotifications);
+    };
+    for (collectionId in submission.collectionIds.values()) {
+      switch (collections.get(collectionId)) {
+        case (null) {};
+        case (?collection) {
+          let updatedPoemIds = collection.poemIds.clone();
+          updatedPoemIds.add(poemIdCounter, {});
+          collections.add(
+            collectionId,
+            {
+              collection with
+              poemIds = updatedPoemIds
+            },
+          );
+        };
+      };
+    };
+    poemIdCounter += 1;
+    poemIdCounter - 1;
+  };
+
   // Util function for migration
-  public func updatePoem(poemId : Nat, newPoem : Poem) {
+  public shared ({ caller }) func updatePoem(poemId : Nat, newPoem : Poem) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Runtime.trap("Unauthorized: Only admins can update poems");
+    };
     poems.add(poemId, newPoem);
   };
 };

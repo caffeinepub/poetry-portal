@@ -21,6 +21,14 @@ export interface CollectionView {
     name: string;
     description: string;
 }
+export interface PoemSubmission {
+    title: string;
+    content: string;
+    collectionIds: Array<bigint>;
+    poemType: PoemType;
+    author: string;
+    imageUrl?: ExternalBlob;
+}
 export type Time = bigint;
 export interface PoemSearchResult {
     poem: Poem;
@@ -72,5 +80,6 @@ export interface backendInterface {
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     searchPoems(searchTerm: string): Promise<Array<PoemSearchResult>>;
     submitPoem(title: string, content: string, author: string, poemType: PoemType, imageUrl: ExternalBlob | null): Promise<bigint>;
+    submitPoemWithCollections(submission: PoemSubmission): Promise<bigint>;
     updatePoem(poemId: bigint, newPoem: Poem): Promise<void>;
 }
