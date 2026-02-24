@@ -1,80 +1,27 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Frontend Admin Access Control Implementation",
+  "title": "Publish Draft Version 9 to Production",
   "requirements": [
     {
-      "id": "REQ-2",
-      "summary": "Add frontend route guards to all /admin/* routes that check admin status and redirect non-admin users to home page with informative message",
+      "id": "REQ-1",
+      "summary": "Publish the current draft version (Version 9) to production with a permanent URL accessible to all users",
       "acceptanceCriteria": [
-        "Route guard checks admin status before allowing access to /admin/add-poem",
-        "Route guard checks admin status before allowing access to /admin/collections",
-        "Route guard checks admin status before allowing access to admin panel",
-        "Non-admin users are redirected to home page when attempting to access admin routes",
-        "User sees a toast notification explaining they lack admin permissions"
+        "Draft Version 9 is deployed to production environment",
+        "App is accessible via a permanent production URL",
+        "All features from Version 9 are working in production",
+        "Production deployment is stable and accessible to end users"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/AdminRouteGuard.tsx",
-          "operation": "create",
-          "description": "Create a route guard component that wraps admin routes, checks if the authenticated user is an admin using the isCallerAdmin backend method, and redirects non-admin users to the home page with a toast notification explaining insufficient permissions. Use useInternetIdentity to verify authentication, useIsCallerAdmin query hook to check admin status, and useNavigate for redirection. Display a loading state while checking admin status. Verify the authorization component's usage instructions before implementing."
+          "path": "frontend/src/pages/AdminPanel.tsx",
+          "operation": "modify",
+          "description": "Add a 'Publish to Production' section with a button that calls the backend publishToProduction method. Include confirmation dialog to prevent accidental publication. Display the current draft mode status using getIsDraftModeEnabled. Show success/error feedback after publication attempt. Only accessible to authenticated admin users."
         },
         {
           "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Add a new React Query hook useIsCallerAdmin that calls actor.isCallerAdmin() to check if the current authenticated user has admin privileges. The hook should be enabled only when the actor is available and should return boolean admin status. Include proper error handling and retry configuration."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Wrap all admin routes (/admin/add-poem, /admin/collections, /admin/panel) with the AdminRouteGuard component to enforce admin-only access. Keep the route structure but nest each admin route's component inside AdminRouteGuard. Ensure non-admin routes remain accessible to all users."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Hide admin navigation links (Add Poem, Collections, Admin Panel) in the header for non-admin users so only the owner sees these navigation options",
-      "acceptanceCriteria": [
-        "Add Poem link is hidden for non-admin users",
-        "Collections management link is hidden for non-admin users",
-        "Admin Panel link is hidden for non-admin users",
-        "Navigation links are visible and functional for admin user",
-        "Home link remains visible to all users"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/Layout.tsx",
-          "operation": "modify",
-          "description": "Conditionally render admin navigation links (Add Poem, Collections, Admin Panel) based on admin status. Use the useIsCallerAdmin hook to check if the current user is an admin. Only display these links when the user is authenticated and isAdmin returns true. Keep the Home link and LoginButton visible to all users. Show the notification bell only for authenticated users. Verify the authorization component's usage instructions before implementing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Ensure public users retain full access to view poems, download poems, like poems, and comment on poems without any restrictions",
-      "acceptanceCriteria": [
-        "Non-admin users can view all poems on home page",
-        "Non-admin users can view individual poem details",
-        "Non-admin users can download poems as images",
-        "Non-admin users can like poems",
-        "Non-admin users can comment on poems",
-        "Backend allows these read and interaction operations for all authenticated users"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/Home.tsx",
-          "operation": "modify",
-          "description": "Verify that the Home page displays poems for all users regardless of admin status. Ensure search functionality and collection filtering remain accessible to all authenticated users. No admin checks should block viewing poem cards or navigating to poem details."
-        },
-        {
-          "path": "frontend/src/pages/PoemDetail.tsx",
-          "operation": "modify",
-          "description": "Verify that the PoemDetail page allows all authenticated users to view poem content, download images (both original and generated), and add poems to their collections. Ensure download functionality and collection assignment remain accessible to non-admin users. No admin checks should restrict these read and interaction operations."
-        },
-        {
-          "path": "frontend/src/components/PoemCard.tsx",
-          "operation": "modify",
-          "description": "Verify that the PoemCard component allows all authenticated users to view poem information and add poems to collections via the dialog. Ensure the add-to-collection functionality remains accessible to non-admin users without admin checks."
+          "description": "Add usePublishToProduction mutation hook that calls actor.publishToProduction() and invalidates relevant queries after successful publication. Add useGetIsDraftModeEnabled query hook to check current draft mode status."
         }
       ]
     }

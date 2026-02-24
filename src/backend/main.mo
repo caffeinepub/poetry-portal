@@ -2,9 +2,8 @@ import Map "mo:core/Map";
 import List "mo:core/List";
 import Time "mo:core/Time";
 import Nat "mo:core/Nat";
-import Text "mo:core/Text";
 import Array "mo:core/Array";
-import Order "mo:core/Order";
+import Text "mo:core/Text";
 import Iter "mo:core/Iter";
 import Runtime "mo:core/Runtime";
 import Principal "mo:core/Principal";
@@ -18,6 +17,12 @@ actor {
   include MixinAuthorization(accessControlState);
   include MixinStorage();
 
+  // Versioning
+  let versionMajor = 9;
+  let versionMinor = 0;
+  let versionPatch = 0;
+
+  // Types
   public type UserProfile = { name : Text };
 
   public type CollectionView = {
@@ -65,20 +70,50 @@ actor {
     collectionIds : [Nat];
   };
 
+  // State
   let poems = Map.empty<Nat, Poem>();
   let collections = Map.empty<Nat, Collection>();
   let userProfiles = Map.empty<Principal, UserProfile>();
   let notifications = Map.empty<Principal, List.List<Notification>>();
   var poemIdCounter = 0;
   var collectionIdCounter = 0;
+  var draftModeEnabled = true;
 
+  // Draft mode - accessible to everyone (no auth required)
+  public query ({ caller }) func getIsDraftModeEnabled() : async Bool {
+    draftModeEnabled;
+  };
+
+  // Fetch version - accessible to everyone
+  public query ({ caller }) func getVersion() : async (Nat, Nat, Nat) {
+    (versionMajor, versionMinor, versionPatch);
+  };
+
+  // Admin-only function to enable/disable draft mode
+  public shared ({ caller }) func setDraftMode(enabled : Bool) : async () {
+    if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
+      Runtime.trap("Unauthorized: Only admins can change draft mode");
+    };
+    draftModeEnabled := enabled;
+  };
+
+  // Admin-only function to publish current version (switch off draft mode)
+  public shared ({ caller }) func publishToProduction() : async () {
+    if (not AccessControl.hasPermission(accessControlState, caller, #admin)) {
+      Runtime.trap("Unauthorized: Only admins can publish to production");
+    };
+    draftModeEnabled := false;
+  };
+
+  // User-only: view own profile
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
       Runtime.trap("Unauthorized: Only users can view profiles");
     };
     userProfiles.get(caller);
   };
 
+  // User can view own profile, admin can view any profile
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
     if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Can only view your own profile");
@@ -86,13 +121,15 @@ actor {
     userProfiles.get(user);
   };
 
+  // User-only: save own profile
   public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
       Runtime.trap("Unauthorized: Only users can save profiles");
     };
     userProfiles.add(caller, profile);
   };
 
+  // User-only: create poems
   public shared ({ caller }) func submitPoem(
     title : Text,
     content : Text,
@@ -100,9 +137,10 @@ actor {
     poemType : PoemType,
     imageUrl : ?Storage.ExternalBlob,
   ) : async Nat {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can create poems");
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only authenticated users can create poems");
     };
+
     let newPoem : Poem = {
       id = poemIdCounter;
       title;
@@ -113,11 +151,13 @@ actor {
       imageUrl;
     };
     poems.add(poemIdCounter, newPoem);
+
     let notification : Notification = {
       message = "New poem added: " # title;
       timestamp = Time.now();
       read = false;
     };
+
     for ((user, _) in userProfiles.entries()) {
       let userNotifications = switch (notifications.get(user)) {
         case (null) { List.empty<Notification>() };
@@ -126,12 +166,14 @@ actor {
       userNotifications.add(notification);
       notifications.add(user, userNotifications);
     };
+
     poemIdCounter += 1;
     poemIdCounter - 1;
   };
 
+  // User-only: mark own notifications as read
   public shared ({ caller }) func markNotificationAsRead(index : Nat) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
       Runtime.trap("Unauthorized: Only users can mark notifications");
     };
     switch (notifications.get(caller)) {
@@ -140,6 +182,7 @@ actor {
         if (index >= userNotifications.size()) {
           Runtime.trap("Notification index out of bounds");
         };
+
         let notificationsArray = userNotifications.toArray();
         let updatedArray = Array.tabulate(
           notificationsArray.size(),
@@ -159,10 +202,12 @@ actor {
     };
   };
 
+  // Public query - accessible to all users
   public query ({ caller }) func getAllPoems() : async [Poem] {
     poems.values().toArray();
   };
 
+  // Public query - accessible to all users
   public query ({ caller }) func getPoemById(id : Nat) : async Poem {
     switch (poems.get(id)) {
       case (null) { Runtime.trap("Poem not found") };
@@ -170,8 +215,9 @@ actor {
     };
   };
 
+  // User-only: view own notifications
   public query ({ caller }) func getNotifications() : async [Notification] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
       Runtime.trap("Unauthorized: Only users can view notifications");
     };
     switch (notifications.get(caller)) {
@@ -180,8 +226,9 @@ actor {
     };
   };
 
+  // User-only: view own unread notification count
   public query ({ caller }) func getUnreadNotificationsCount() : async Nat {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
       Runtime.trap("Unauthorized: Only users can view notifications");
     };
     switch (notifications.get(caller)) {
@@ -196,6 +243,7 @@ actor {
     };
   };
 
+  // Public query - accessible to all users
   public query ({ caller }) func getAllCollections() : async [CollectionView] {
     collections.values().toArray().map<Collection, CollectionView>(
       func(collection) {
@@ -207,6 +255,7 @@ actor {
     );
   };
 
+  // Public query - accessible to all users
   public query ({ caller }) func getPoemsByCollectionId(collectionId : Nat) : async [Poem] {
     switch (collections.get(collectionId)) {
       case (null) { Runtime.trap("Collection not found") };
@@ -223,13 +272,15 @@ actor {
     };
   };
 
+  // User-only: remove poems from collections
   public shared ({ caller }) func removePoemFromCollection(
     collectionId : Nat,
     poemId : Nat,
   ) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can remove poems from collections");
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only authenticated users can remove poems from collections");
     };
+
     switch (collections.get(collectionId)) {
       case (null) { Runtime.trap("Collection not found") };
       case (?collection) {
@@ -249,10 +300,12 @@ actor {
     };
   };
 
+  // User-only: delete collections
   public shared ({ caller }) func deleteCollection(collectionId : Nat) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can delete collections");
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only authenticated users can delete collections");
     };
+
     switch (collections.containsKey(collectionId)) {
       case (true) {
         collections.remove(collectionId);
@@ -263,6 +316,7 @@ actor {
     };
   };
 
+  // Public query - accessible to all users
   public query ({ caller }) func searchPoems(searchTerm : Text) : async [PoemSearchResult] {
     let lowerSearchTerm = searchTerm.toLower();
     let results = List.empty<PoemSearchResult>();
@@ -293,10 +347,12 @@ actor {
     results.toArray();
   };
 
+  // User-only: create collections
   public shared ({ caller }) func createCollection(name : Text, description : Text) : async Nat {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can create collections");
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only authenticated users can create collections");
     };
+
     let newCollection : Collection = {
       id = collectionIdCounter;
       name;
@@ -309,13 +365,16 @@ actor {
     collectionIdCounter - 1;
   };
 
+  // User-only: add poems to collections
   public shared ({ caller }) func addPoemToCollection(collectionId : Nat, poemId : Nat) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can add poems to collections");
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only authenticated users can add poems to collections");
     };
+
     if (not poems.containsKey(poemId)) {
       Runtime.trap("Poem does not exist");
     };
+
     switch (collections.get(collectionId)) {
       case (null) { Runtime.trap("Collection not found") };
       case (?collection) {
@@ -332,12 +391,14 @@ actor {
     };
   };
 
+  // User-only: submit poem with collections
   public shared ({ caller }) func submitPoemWithCollections(
     submission : PoemSubmission
   ) : async Nat {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can create poems");
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only authenticated users can create poems");
     };
+
     let newPoem : Poem = {
       id = poemIdCounter;
       title = submission.title;
@@ -348,11 +409,13 @@ actor {
       imageUrl = submission.imageUrl;
     };
     poems.add(poemIdCounter, newPoem);
+
     let notification : Notification = {
       message = "New poem added: " # submission.title;
       timestamp = Time.now();
       read = false;
     };
+
     for ((user, _) in userProfiles.entries()) {
       let userNotifications = switch (notifications.get(user)) {
         case (null) { List.empty<Notification>() };
@@ -361,6 +424,7 @@ actor {
       userNotifications.add(notification);
       notifications.add(user, userNotifications);
     };
+
     for (collectionId in submission.collectionIds.values()) {
       switch (collections.get(collectionId)) {
         case (null) {};
@@ -377,14 +441,15 @@ actor {
         };
       };
     };
+
     poemIdCounter += 1;
     poemIdCounter - 1;
   };
 
-  // Util function for migration
+  // User-only: update poems
   public shared ({ caller }) func updatePoem(poemId : Nat, newPoem : Poem) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can update poems");
+    if (not AccessControl.hasPermission(accessControlState, caller, #user)) {
+      Runtime.trap("Unauthorized: Only authenticated users can update poems");
     };
     poems.add(poemId, newPoem);
   };

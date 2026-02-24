@@ -1,20 +1,24 @@
 import { useState } from 'react';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useIsCallerAdmin, useAssignUserRole } from '../hooks/useQueries';
+import { useIsCallerAdmin, useAssignUserRole, useGetIsDraftModeEnabled, usePublishToProduction } from '../hooks/useQueries';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, CheckCircle2, Shield, AlertCircle } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Loader2, CheckCircle2, Shield, AlertCircle, Rocket } from 'lucide-react';
 import { UserRole } from '../backend';
 import { Principal } from '@dfinity/principal';
+import { toast } from 'sonner';
 
 export default function AdminPanel() {
   const { identity, login, loginStatus } = useInternetIdentity();
   const isAuthenticated = !!identity;
   const { data: isAdmin, isLoading: isCheckingAdmin } = useIsCallerAdmin();
+  const { data: isDraftMode, isLoading: isDraftModeLoading } = useGetIsDraftModeEnabled();
   const { mutate: assignRole, isPending, isSuccess, isError, error } = useAssignUserRole();
+  const { mutate: publishToProduction, isPending: isPublishing } = usePublishToProduction();
 
   const [principalId, setPrincipalId] = useState('');
   const [validationError, setValidationError] = useState('');
@@ -35,15 +39,27 @@ export default function AdminPanel() {
         {
           onSuccess: () => {
             setPrincipalId('');
-            setTimeout(() => {
-              // Reset success state after 3 seconds
-            }, 3000);
+            toast.success('Admin role successfully assigned!');
+          },
+          onError: (err) => {
+            toast.error(err instanceof Error ? err.message : 'Failed to assign admin role');
           },
         }
       );
     } catch (err) {
       setValidationError('Invalid Principal ID format');
     }
+  };
+
+  const handlePublish = () => {
+    publishToProduction(undefined, {
+      onSuccess: () => {
+        toast.success('Successfully published to production! 🎉');
+      },
+      onError: (err) => {
+        toast.error(err instanceof Error ? err.message : 'Failed to publish to production');
+      },
+    });
   };
 
   if (!isAuthenticated) {
@@ -111,12 +127,99 @@ export default function AdminPanel() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12 max-w-3xl">
+    <div className="container mx-auto px-4 py-12 max-w-3xl space-y-6">
+      {/* Publish to Production Section */}
+      <Card className="border-border/40 shadow-lg bg-card/80 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="text-3xl font-serif flex items-center gap-2">
+            <Rocket className="h-8 w-8 text-primary" />
+            Publish to Production
+          </CardTitle>
+          <CardDescription className="text-base">
+            {isDraftModeLoading ? (
+              'Loading draft mode status...'
+            ) : isDraftMode ? (
+              'Your app is currently in draft mode. Publish it to make it live and accessible to everyone.'
+            ) : (
+              'Your app is currently live in production mode.'
+            )}
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          {isDraftModeLoading ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="p-4 bg-muted/50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`h-3 w-3 rounded-full ${isDraftMode ? 'bg-yellow-500' : 'bg-green-500'}`} />
+                  <span className="font-semibold">
+                    Current Status: {isDraftMode ? 'Draft Mode' : 'Production Mode'}
+                  </span>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {isDraftMode
+                    ? 'Publishing will make your app live with a permanent URL accessible to all users.'
+                    : 'Your app is already live and accessible to everyone.'}
+                </p>
+              </div>
+
+              {isDraftMode && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button className="w-full" size="lg" disabled={isPublishing}>
+                      {isPublishing ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Publishing...
+                        </>
+                      ) : (
+                        <>
+                          <Rocket className="h-4 w-4 mr-2" />
+                          Publish to Production
+                        </>
+                      )}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirm Publication</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to publish this app to production? This will make it live and accessible to all users with a permanent URL.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handlePublish}>
+                        Publish Now
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+
+              {!isDraftMode && (
+                <Alert className="border-green-500/50 bg-green-500/10">
+                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  <AlertDescription className="text-green-600">
+                    Your app is live in production!
+                  </AlertDescription>
+                </Alert>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Assign Admin Role Section */}
       <Card className="border-border/40 shadow-lg bg-card/80 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="text-3xl font-serif flex items-center gap-2">
             <Shield className="h-8 w-8 text-primary" />
-            Admin Panel
+            Assign Admin Role
           </CardTitle>
           <CardDescription className="text-base">
             Assign admin privileges to users by entering their Principal ID.

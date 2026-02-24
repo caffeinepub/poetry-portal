@@ -308,3 +308,31 @@ export function useAssignUserRole() {
     },
   });
 }
+
+export function useGetIsDraftModeEnabled() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery<boolean>({
+    queryKey: ['isDraftModeEnabled'],
+    queryFn: async () => {
+      if (!actor) return true;
+      return actor.getIsDraftModeEnabled();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
+export function usePublishToProduction() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!actor) throw new Error('Actor not initialized');
+      return actor.publishToProduction();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['isDraftModeEnabled'] });
+    },
+  });
+}

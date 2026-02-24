@@ -1,57 +1,27 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-23T07:42:23.323Z",
+  "generatedAt": "2026-02-24T02:48:28.632Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
-    "implemented": 2,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Implement backend admin authorization system that registers the owner's Principal ID as the sole admin and validates admin status for all create, update, and delete operations on poems and collections",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-2",
-        "summary": "Add frontend route guards to all /admin/* routes (including /admin/add-poem, /admin/collections, and admin panel) that check if the authenticated user is admin and redirect non-admin users to the home page with an informative message",
+        "summary": "Publish the current draft version (Version 9) to production with a permanent URL accessible to all users",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/AdminRouteGuard.tsx",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/App.tsx"
+          "frontend/src/pages/AdminPanel.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/AdminRouteGuard.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/pages/AdminPanel.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ]
-      },
-      {
-        "id": "REQ-3",
-        "summary": "Hide or disable admin navigation links (Add Poem, Collections, Admin Panel) in the header Layout component for non-admin users so only the owner sees these navigation options",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/Layout.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/Layout.tsx"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Ensure public users retain full access to view poems, download poems, like poems, and comment on poems without any restrictions",
-        "status": "missing",
-        "plannedFiles": [
-          "frontend/src/pages/Home.tsx",
-          "frontend/src/pages/PoemDetail.tsx",
-          "frontend/src/components/PoemCard.tsx"
-        ],
-        "matchedFiles": []
       }
     ]
   },
@@ -61,10 +31,12 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/components/AdminRouteGuard.tsx",
-    "frontend/src/components/Layout.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/declarations/backend.did.d.ts",
     "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/AdminPanel.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

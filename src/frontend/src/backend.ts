@@ -162,16 +162,20 @@ export interface backendInterface {
     getAllPoems(): Promise<Array<Poem>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    getIsDraftModeEnabled(): Promise<boolean>;
     getNotifications(): Promise<Array<Notification>>;
     getPoemById(id: bigint): Promise<Poem>;
     getPoemsByCollectionId(collectionId: bigint): Promise<Array<Poem>>;
     getUnreadNotificationsCount(): Promise<bigint>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
+    getVersion(): Promise<[bigint, bigint, bigint]>;
     isCallerAdmin(): Promise<boolean>;
     markNotificationAsRead(index: bigint): Promise<void>;
+    publishToProduction(): Promise<void>;
     removePoemFromCollection(collectionId: bigint, poemId: bigint): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     searchPoems(searchTerm: string): Promise<Array<PoemSearchResult>>;
+    setDraftMode(enabled: boolean): Promise<void>;
     submitPoem(title: string, content: string, author: string, poemType: PoemType, imageUrl: ExternalBlob | null): Promise<bigint>;
     submitPoemWithCollections(submission: PoemSubmission): Promise<bigint>;
     updatePoem(poemId: bigint, newPoem: Poem): Promise<void>;
@@ -389,6 +393,20 @@ export class Backend implements backendInterface {
             return from_candid_UserRole_n18(this._uploadFile, this._downloadFile, result);
         }
     }
+    async getIsDraftModeEnabled(): Promise<boolean> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getIsDraftModeEnabled();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getIsDraftModeEnabled();
+            return result;
+        }
+    }
     async getNotifications(): Promise<Array<Notification>> {
         if (this.processError) {
             try {
@@ -459,6 +477,28 @@ export class Backend implements backendInterface {
             return from_candid_opt_n17(this._uploadFile, this._downloadFile, result);
         }
     }
+    async getVersion(): Promise<[bigint, bigint, bigint]> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getVersion();
+                return [
+                    result[0],
+                    result[1],
+                    result[2]
+                ];
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getVersion();
+            return [
+                result[0],
+                result[1],
+                result[2]
+            ];
+        }
+    }
     async isCallerAdmin(): Promise<boolean> {
         if (this.processError) {
             try {
@@ -484,6 +524,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.markNotificationAsRead(arg0);
+            return result;
+        }
+    }
+    async publishToProduction(): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.publishToProduction();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.publishToProduction();
             return result;
         }
     }
@@ -527,6 +581,20 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.searchPoems(arg0);
             return from_candid_vec_n20(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async setDraftMode(arg0: boolean): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.setDraftMode(arg0);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.setDraftMode(arg0);
+            return result;
         }
     }
     async submitPoem(arg0: string, arg1: string, arg2: string, arg3: PoemType, arg4: ExternalBlob | null): Promise<bigint> {

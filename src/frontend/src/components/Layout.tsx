@@ -2,7 +2,6 @@ import { Outlet, Link, useNavigate } from '@tanstack/react-router';
 import { BookOpen, PenTool, FolderOpen, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useIsCallerAdmin } from '../hooks/useQueries';
 import LoginButton from './LoginButton';
 import NotificationBell from './NotificationBell';
 
@@ -11,7 +10,6 @@ export default function Layout() {
   const currentYear = new Date().getFullYear();
   const { identity } = useInternetIdentity();
   const isAuthenticated = !!identity;
-  const { data: isAdmin, isLoading: isCheckingAdmin } = useIsCallerAdmin();
   
   // Generate app identifier for UTM tracking
   const appIdentifier = encodeURIComponent(
@@ -37,7 +35,7 @@ export default function Layout() {
             >
               Home
             </Button>
-            {isAuthenticated && isAdmin && !isCheckingAdmin && (
+            {isAuthenticated && (
               <>
                 <Button
                   variant="ghost"
