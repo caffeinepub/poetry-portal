@@ -1,0 +1,75 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-add-an-admin-login-ui-a-modal-or-dedicated-login-page-with-a-password-input-field-on-successful-password-verification-store-the-admin-session-token-flag-in-localstorage-or-sessionstorage-so-the-admin-remains-logged-in-across-page-refreshes-within-the-session-provide-a-logout-option-to-clear-admin-access",
+      "featureTitle": "Add an admin login UI: a modal or dedicated login page with a password input field. On successful password verification, store the admin session token/flag in localStorage or sessionStorage so the admin remains logged in across page refreshes within the session. Provide a logout option to clear admin access.",
+      "files": [
+        "frontend/src/components/AdminLoginModal.tsx",
+        "frontend/src/components/Layout.tsx",
+        "frontend/src/hooks/useAdminAuth.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-restrict-all-admin-ui-controls-add-poem-button-edit-button-collection-manager-create-delete-actions-admin-panel-page-so-they-are-only-visible-and-accessible-when-the-user-is-in-admin-mode-password-authenticated-public-users-must-not-see-or-be-able-to-interact-with-these-controls",
+      "featureTitle": "Restrict all admin UI controls (Add Poem button, Edit button, Collection Manager create/delete actions, Admin Panel page) so they are only visible and accessible when the user is in admin mode (password authenticated). Public users must not see or be able to interact with these controls.",
+      "files": [
+        "frontend/src/components/AdminRouteGuard.tsx",
+        "frontend/src/components/PoemCard.tsx",
+        "frontend/src/pages/AdminForm.tsx",
+        "frontend/src/pages/AdminPanel.tsx",
+        "frontend/src/pages/CollectionManager.tsx",
+        "frontend/src/pages/PoemDetail.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-delete-button-to-each-poem-card-and-the-poem-detail-page-the-button-must-only-be-visible-when-the-user-is-in-admin-mode-clicking-it-shows-a-confirmation-dialog-before-calling-the-deletepoem-backend-function-after-successful-deletion-the-poem-is-removed-from-the-list-and-the-user-is-redirected-to-the-home-page-if-on-the-detail-page",
+      "featureTitle": "Add a Delete button to each poem card and the poem detail page. The button must only be visible when the user is in admin mode. Clicking it shows a confirmation dialog before calling the deletePoem backend function. After successful deletion, the poem is removed from the list and the user is redirected to the home page if on the detail page.",
+      "files": [
+        "frontend/src/components/PoemCard.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/Home.tsx",
+        "frontend/src/pages/PoemDetail.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

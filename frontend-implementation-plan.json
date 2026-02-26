@@ -1,0 +1,112 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Password-Protected Admin System with Delete Poetry Feature",
+  "requirements": [
+    {
+      "id": "REQ-3",
+      "summary": "Add admin password login UI with session persistence and logout option",
+      "acceptanceCriteria": [
+        "A password input modal or page is accessible from the header/navigation.",
+        "Correct password grants admin mode; wrong password shows an error message.",
+        "Admin session persists across page refreshes within the browser session.",
+        "A logout/exit admin mode button is visible when admin is logged in.",
+        "Admin mode indicator is shown in the UI (e.g., a badge or label in the header)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useAdminAuth.ts",
+          "operation": "create",
+          "description": "Create a custom hook to manage admin authentication state using sessionStorage. Provides functions to verify password via backend, store/retrieve admin session token, check if user is in admin mode, and logout. Returns { isAdminMode, login: (password: string) => Promise<boolean>, logout: () => void, isLoading }."
+        },
+        {
+          "path": "frontend/src/components/AdminLoginModal.tsx",
+          "operation": "create",
+          "description": "Create a modal dialog component with a password input field and submit button. Uses useAdminAuth hook to call backend verifyAdminPassword function. Shows error message on wrong password. Closes modal and updates admin state on successful login. Accessible via a button in the Layout header."
+        },
+        {
+          "path": "frontend/src/components/Layout.tsx",
+          "operation": "modify",
+          "description": "Add admin login button to header navigation that opens AdminLoginModal. When admin is logged in, replace login button with admin mode indicator badge and logout button. Show/hide admin-only navigation links (Add Poem, Collections, Admin Panel) based on isAdminMode state from useAdminAuth hook."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Restrict all admin UI controls to admin mode only",
+      "acceptanceCriteria": [
+        "Add Poem navigation link/button is hidden from non-admin users.",
+        "Edit buttons on poems are hidden from non-admin users.",
+        "Collection create and delete controls are hidden from non-admin users.",
+        "Admin Panel page redirects or shows an access-denied message to non-admin users.",
+        "All admin routes are guarded and inaccessible without admin session."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/AdminRouteGuard.tsx",
+          "operation": "modify",
+          "description": "Implement route guard component that checks isAdminMode from useAdminAuth hook. If not in admin mode, show an access-denied message or redirect to home page. Wrap admin-only routes (AdminForm, AdminPanel, CollectionManager) with this guard in App.tsx router configuration."
+        },
+        {
+          "path": "frontend/src/pages/AdminForm.tsx",
+          "operation": "modify",
+          "description": "Add AdminRouteGuard wrapper to prevent non-admin access. Remove or comment out existing authentication check if it relies on Internet Identity, since admin mode is now password-based via useAdminAuth hook."
+        },
+        {
+          "path": "frontend/src/pages/AdminPanel.tsx",
+          "operation": "modify",
+          "description": "Add AdminRouteGuard wrapper to prevent non-admin access. Update role assignment functionality to work with password-based admin mode if needed. Ensure draft mode and publish functions are only callable when admin mode is active."
+        },
+        {
+          "path": "frontend/src/pages/CollectionManager.tsx",
+          "operation": "modify",
+          "description": "Add AdminRouteGuard wrapper to collection management page. Hide create collection button and delete collection actions from non-admin users by checking isAdminMode from useAdminAuth hook."
+        },
+        {
+          "path": "frontend/src/components/PoemCard.tsx",
+          "operation": "modify",
+          "description": "Add conditional rendering for Edit button based on isAdminMode from useAdminAuth hook. Only show Edit button when admin mode is active. Keep existing add-to-collection functionality visible to all users."
+        },
+        {
+          "path": "frontend/src/pages/PoemDetail.tsx",
+          "operation": "modify",
+          "description": "Add conditional rendering for Edit button based on isAdminMode from useAdminAuth hook. Only show Edit button when admin mode is active. Keep poem viewing and download functionality accessible to all users."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Add Delete button to poem cards and detail page with confirmation dialog",
+      "acceptanceCriteria": [
+        "A Delete button appears on each PoemCard and on the PoemDetail page only when admin mode is active.",
+        "Clicking Delete opens a confirmation dialog (e.g., 'Are you sure you want to delete this poem?').",
+        "Confirming deletion calls deletePoem and invalidates the poem list cache.",
+        "The deleted poem is immediately removed from the home page grid.",
+        "If deleted from PoemDetail page, user is navigated back to home after deletion.",
+        "Non-admin users do not see the Delete button at all."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add useDeletePoem mutation hook that calls backend deletePoem function. On success, invalidate queries for ['poems'], ['poem', poemId], and all collection queries to refresh UI. Include error handling for authorization failures."
+        },
+        {
+          "path": "frontend/src/components/PoemCard.tsx",
+          "operation": "modify",
+          "description": "Add Delete button that is only visible when isAdminMode is true (from useAdminAuth hook). Clicking Delete opens a confirmation dialog using shadcn/ui AlertDialog component. On confirmation, call useDeletePoem mutation with the poem ID. Show loading state during deletion."
+        },
+        {
+          "path": "frontend/src/pages/PoemDetail.tsx",
+          "operation": "modify",
+          "description": "Add Delete button to poem detail page that is only visible when isAdminMode is true (from useAdminAuth hook). Clicking Delete opens a confirmation dialog using shadcn/ui AlertDialog component. On successful deletion, navigate back to home page using router navigation. Show loading state and error messages appropriately."
+        },
+        {
+          "path": "frontend/src/pages/Home.tsx",
+          "operation": "modify",
+          "description": "Ensure poem grid automatically updates when a poem is deleted by relying on React Query cache invalidation. No explicit changes needed if using the poems query from useQueries hook, but verify that deleted poems are removed from the grid without requiring a manual refresh."
+        }
+      ]
+    }
+  ]
+}

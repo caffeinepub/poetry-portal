@@ -1,0 +1,70 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-26T03:32:14.545Z",
+  "summary": "The diff implements most requirements for the password-protected admin system with delete poetry feature. Frontend admin auth (useAdminAuth hook), login modal (AdminLoginModal), route guards (AdminRouteGuard), admin-only UI controls, delete buttons with confirmation dialogs, and backend deletePoem function are all present. However, the backend password verification is implemented purely on the frontend (hardcoded password in useAdminAuth.ts), and backend admin authorization for existing operations uses a Principal-based AccessControl system rather than the password-based verifyAdminPassword function required by REQ-1.",
+  "missing_requirements": [
+    {
+      "id": "REQ-1",
+      "requirement": "Add a fixed admin password stored securely in the backend. Expose a backend function that accepts a password string and returns a session token (or boolean) indicating admin access.",
+      "reason": "The backend uses an AccessControl/Principal-based system for admin authorization, not a password-based verifyAdminPassword(password: Text) function. The password 'GojriAdab2024!' is hardcoded in the frontend hook (useAdminAuth.ts) and verified client-side only. No verifyAdminPassword backend function is exposed.",
+      "evidence": [
+        "frontend/src/hooks/useAdminAuth.ts",
+        "backend/main.mo"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Associated image blob data is also deleted if present when deletePoem is called.",
+      "reason": "The backend main.mo diff is truncated and does not show the deletePoem implementation confirming blob/image data deletion. There is no visible evidence in the diff that the backend implementation removes associated blob data alongside the poem record.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/useQueries.ts"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Non-admin callers receive an authorization error when calling deletePoem.",
+      "reason": "Since the backend uses Principal-based AccessControl rather than the frontend password system, and the password is checked client-side only, any caller can bypass the frontend check and call deletePoem directly on the backend canister without the password requirement.",
+      "evidence": [
+        "backend/main.mo",
+        "frontend/src/hooks/useAdminAuth.ts"
+      ]
+    }
+  ],
+  "hallucinated_features": [
+    {
+      "description": "Frontend-only password check: the admin password 'GojriAdab2024!' is hardcoded in useAdminAuth.ts and verified client-side with a simple string comparison, with no backend call made during login.",
+      "reason": "The build request requires the backend to store the password securely and expose a verifyAdminPassword function. The implementation does the password check entirely on the frontend, contradicting REQ-1's requirement for backend password storage and verification.",
+      "evidence": [
+        "frontend/src/hooks/useAdminAuth.ts"
+      ]
+    },
+    {
+      "description": "A backend/migration.mo file was added with empty OldActor/NewActor type stubs and a run function.",
+      "reason": "No migration module was requested in the build requirements. This appears to be scaffolding added beyond what was specified.",
+      "evidence": [
+        "backend/migration.mo"
+      ]
+    }
+  ],
+  "confidence": 0.72,
+  "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
+    "frontend-file-summaries.txt",
+    "frontend/src/App.tsx",
+    "frontend/src/components/AdminLoginModal.tsx",
+    "frontend/src/components/AdminRouteGuard.tsx",
+    "frontend/src/components/Layout.tsx",
+    "frontend/src/components/PoemCard.tsx",
+    "frontend/src/hooks/useAdminAuth.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/AdminForm.tsx",
+    "frontend/src/pages/AdminPanel.tsx",
+    "frontend/src/pages/CollectionManager.tsx",
+    "frontend/src/pages/Home.tsx",
+    "frontend/src/pages/PoemDetail.tsx",
+    "project_state.json"
+  ]
+}

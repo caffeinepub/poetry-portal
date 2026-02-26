@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Lora:ital,wght@0,400..700;1,400..700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --radius: 0.75rem;
+        
+        /* Warm earth tones - Light mode */
+        --background: 0.98 0.015 45;
+        --foreground: 0.25 0.02 30;
+        
+        --card: 0.99 0.01 50;
+        --card-foreground: 0.25 0.02 30;
+        
+        --popover: 0.99 0.01 50;
+        --popover-foreground: 0.25 0.02 30;
+        
+        --primary: 0.45 0.12 35;
+        --primary-foreground: 0.98 0.01 50;
+        
+        --secondary: 0.92 0.025 45;
+        --secondary-foreground: 0.35 0.03 30;
+        
+        --muted: 0.94 0.02 45;
+        --muted-foreground: 0.55 0.03 35;
+        
+        --accent: 0.88 0.08 55;
+        --accent-foreground: 0.25 0.02 30;
+        
+        --destructive: 0.55 0.22 25;
+        --destructive-foreground: 0.98 0.01 50;
+        
+        --border: 0.88 0.02 45;
+        --input: 0.88 0.02 45;
+        --ring: 0.45 0.12 35;
+        
+        --chart-1: 0.65 0.15 40;
+        --chart-2: 0.58 0.12 120;
+        --chart-3: 0.52 0.10 200;
+        --chart-4: 0.70 0.18 30;
+        --chart-5: 0.62 0.14 60;
+    }
+
+    .dark {
+        /* Warm earth tones - Dark mode */
+        --background: 0.18 0.02 30;
+        --foreground: 0.95 0.015 45;
+        
+        --card: 0.22 0.025 32;
+        --card-foreground: 0.95 0.015 45;
+        
+        --popover: 0.20 0.025 30;
+        --popover-foreground: 0.95 0.015 45;
+        
+        --primary: 0.75 0.10 45;
+        --primary-foreground: 0.20 0.02 30;
+        
+        --secondary: 0.28 0.03 32;
+        --secondary-foreground: 0.92 0.015 45;
+        
+        --muted: 0.32 0.03 35;
+        --muted-foreground: 0.65 0.04 40;
+        
+        --accent: 0.55 0.10 50;
+        --accent-foreground: 0.95 0.015 45;
+        
+        --destructive: 0.60 0.20 28;
+        --destructive-foreground: 0.95 0.015 45;
+        
+        --border: 0.32 0.03 35;
+        --input: 0.32 0.03 35;
+        --ring: 0.65 0.08 45;
+        
+        --chart-1: 0.60 0.18 45;
+        --chart-2: 0.55 0.14 130;
+        --chart-3: 0.50 0.12 210;
+        --chart-4: 0.65 0.20 35;
+        --chart-5: 0.58 0.16 65;
+    }
+
+    * {
+        @apply border-border;
+    }
+    
+    body {
+        @apply bg-background text-foreground;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Lora', 'Crimson Text', Georgia, serif;
+    }
+    
+    .font-serif {
+        font-family: 'Crimson Text', Georgia, serif;
+    }
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}
