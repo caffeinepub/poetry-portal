@@ -1,109 +1,34 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T03:32:14.548Z",
+  "generatedAt": "2026-02-26T04:05:24.982Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
-    "implemented": 3,
+    "total": 1,
+    "implemented": 1,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Add a fixed admin password stored securely in the backend. Expose a backend function that accepts a password string and returns a session token (or boolean) indicating admin access. All admin-only operations (add, edit, delete poem, manage collections) must verify admin authorization before executing.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-2",
-        "summary": "Add a deletePoem backend function that removes a poem (and its associated blob/image data) by ID. This function must only succeed when called by an authenticated admin.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-3",
-        "summary": "Add an admin login UI: a modal or dedicated login page with a password input field. On successful password verification, store the admin session token/flag in localStorage or sessionStorage so the admin remains logged in across page refreshes within the session. Provide a logout option to clear admin access.",
+        "summary": "Update the hardcoded admin password in the useAdminAuth hook to 'SC05GOJRI' so that entering this password on the admin login modal grants admin access.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useAdminAuth.ts",
-          "frontend/src/components/AdminLoginModal.tsx",
-          "frontend/src/components/Layout.tsx"
+          "frontend/src/hooks/useAdminAuth.ts"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useAdminAuth.ts",
-          "frontend/src/components/AdminLoginModal.tsx",
-          "frontend/src/components/Layout.tsx"
-        ]
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Restrict all admin UI controls (Add Poem button, Edit button, Collection Manager create/delete actions, Admin Panel page) so they are only visible and accessible when the user is in admin mode (password authenticated). Public users must not see or be able to interact with these controls.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/AdminRouteGuard.tsx",
-          "frontend/src/pages/AdminForm.tsx",
-          "frontend/src/pages/AdminPanel.tsx",
-          "frontend/src/pages/CollectionManager.tsx",
-          "frontend/src/components/PoemCard.tsx",
-          "frontend/src/pages/PoemDetail.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/AdminRouteGuard.tsx",
-          "frontend/src/pages/AdminForm.tsx",
-          "frontend/src/pages/AdminPanel.tsx",
-          "frontend/src/pages/CollectionManager.tsx",
-          "frontend/src/components/PoemCard.tsx",
-          "frontend/src/pages/PoemDetail.tsx"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Add a Delete button to each poem card and the poem detail page. The button must only be visible when the user is in admin mode. Clicking it shows a confirmation dialog before calling the deletePoem backend function. After successful deletion, the poem is removed from the list and the user is redirected to the home page if on the detail page.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/PoemCard.tsx",
-          "frontend/src/pages/PoemDetail.tsx",
-          "frontend/src/pages/Home.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/PoemCard.tsx",
-          "frontend/src/pages/PoemDetail.tsx",
-          "frontend/src/pages/Home.tsx"
+          "frontend/src/hooks/useAdminAuth.ts"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
-    "build-template/README.md",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/AdminLoginModal.tsx",
-    "frontend/src/components/AdminRouteGuard.tsx",
-    "frontend/src/components/Layout.tsx",
-    "frontend/src/components/PoemCard.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
     "frontend/src/hooks/useAdminAuth.ts",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/AdminForm.tsx",
-    "frontend/src/pages/AdminPanel.tsx",
-    "frontend/src/pages/CollectionManager.tsx",
-    "frontend/src/pages/Home.tsx",
-    "frontend/src/pages/PoemDetail.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

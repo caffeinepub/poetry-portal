@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 const ADMIN_SESSION_KEY = 'gojri_admin_session';
-const ADMIN_PASSWORD = 'GojriAdab2024!';
+const ADMIN_PASSWORD = 'SC05GOJRI';
 
 export function useAdminAuth() {
   const [isAdminMode, setIsAdminMode] = useState<boolean>(() => {

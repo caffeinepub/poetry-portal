@@ -19,6 +19,6 @@
   "frontend/src/utils/poemImageGenerator.ts": "Canvas-based utility function to generate attractive poster-style images from text poems with proper typography, warm earth tone colors, decorative borders, and branding.",
   "frontend/src/pages/AdminPanel.tsx": "Admin-only panel wrapped in AdminRouteGuard showing draft mode status and publish-to-production functionality with confirmation dialog, using password-based admin auth.",
   "frontend/src/components/AdminRouteGuard.tsx": "Route guard component using useAdminAuth hook (password-based) that shows an access-denied screen with navigation options when admin mode is not active.",
-  "frontend/src/hooks/useAdminAuth.ts": "Custom hook managing password-based admin authentication using sessionStorage for session persistence, with login/logout functions and a hardcoded admin password check.",
+  "frontend/src/hooks/useAdminAuth.ts": "Custom hook managing password-based admin authentication using sessionStorage for session persistence, with login/logout functions and the admin password set to 'SC05GOJRI'.",
   "frontend/src/components/AdminLoginModal.tsx": "Modal dialog component with password input (show/hide toggle) for admin login, using useAdminAuth hook to verify password and show error messages on failure."
 }
